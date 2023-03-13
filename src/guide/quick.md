@@ -99,6 +99,12 @@ FView 只做一件事：显示 FPlayer 解码后的视频内容。FView 几乎�
     </tr></tbody>
 </table>
 
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5039983089268679"
-     crossorigin="anonymous">
-</script>
+<html lang="">
+    <head>
+        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5039983089268679"
+             crossorigin="anonymous">
+        </script>
+        <title></title>
+    </head>
+</html>
+
