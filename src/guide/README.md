@@ -128,12 +128,3 @@ $ flutter build ios --no-codesign
   建议在 ios 文件夹中运行 `pod install --verbose` 查看实时下载进度。
 
 Flutter 中安装 fplayer 的内容到这里就结束了，有任何问题请在 [github issues](https://github.com/FlutterPlayer/fplayer/issues) 中进行提问。
-
-<html lang="">
-    <head>
-        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5039983089268679"
-             crossorigin="anonymous">
-        </script>
-        <title></title>
-    </head>
-</html>

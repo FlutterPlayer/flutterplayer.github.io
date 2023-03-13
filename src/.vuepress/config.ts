@@ -2,6 +2,17 @@ import { defineUserConfig } from "vuepress";
 import theme from "./theme.js";
 
 export default defineUserConfig({
+  head: [
+    [
+      "script",
+      {
+        "data-ad-client": "ca-pub-5039983089268679",
+        async: true,
+        src: "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"
+      }
+    ]
+  ],
+
   base: "/",
 
   locales: {
