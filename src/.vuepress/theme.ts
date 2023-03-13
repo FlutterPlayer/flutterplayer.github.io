@@ -52,6 +52,10 @@ export default hopeTheme({
       editLink: false,
 
       pageInfo: false,
+
+      contributors: false,
+
+      lastUpdated: false,
     },
   },
 
