@@ -46,3 +46,9 @@ fplayer 有内置的编译好的ffmepg 和 ijkplayer，分别托管在 jcenter �
 
 <span><small> 由于个人能力限制，文档中难免不出现纰漏。  
 如果您在阅读时发现任何不当或者错误内容，请在 [github issues](https://github.com/FlutterPlayer/fplayer/issues) 上进行指正，或直接提交 [pull request](https://github.com/FlutterPlayer/fplayer/pulls)。 </small></span>
+
+<head>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5039983089268679"
+         crossorigin="anonymous">
+    </script>
+</head>
