@@ -4,7 +4,7 @@ export const zhNavbar = navbar([
   "/",
   {
     text: "文档",
-    icon: "creative",
+    icon: "repo",
     link: "/guide/"
   }
 ]);

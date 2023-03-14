@@ -19,7 +19,7 @@ export default defineUserConfig({
   locales: {
     "/": {
       lang: "zh-CN",
-      title: "fplayer -- Flutter plugin for video player",
+      title: "Fplayer -- Flutter plugin for video player",
       description: "fplayer的官方文档",
     },
     // "/en/": {

@@ -2,15 +2,15 @@
 home: true
 icon: home
 title: 首页
-heroImage: /logo.svg
-heroText: fplayer
+heroImage: /logo.png
+heroText: Fplayer
 tagline: 基于fijkplayer二次开发的flutter的媒体播放器
 actions:
   - text: 开始使用 💡
-    link: /guide/
+    link: /guide/quick
     type: primary
 
-  - text: 入门指南
+  - text: 入门指南 📖
     link: /guide/
 
 copyright: false
@@ -35,7 +35,7 @@ fplayer 有内置的编译好的ffmepg 和 ijkplayer，分别托管在 Meven Cen
 
 ## 开启你的 fplayer 之旅：
 
-* 中文版 [开始使用](/)
+* 中文版 [开始使用](/guide/quick)
 <!-- * English Version [Getting Started](/en/) -->
 
 <!-- * Read news, hints and tips on our [developer blog][]. -->
