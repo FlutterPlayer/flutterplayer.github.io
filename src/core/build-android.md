@@ -58,4 +58,4 @@ cd ../ijkplayer
 ```
 
 ## 产物
-在目录下会产生fijkplayer-full-release.aar文件引入即可使用
+在目录下会产生fplayer-core.aar文件引入即可使用
