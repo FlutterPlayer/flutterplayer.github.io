@@ -19,7 +19,7 @@ export default defineUserConfig({
     "/": {
       lang: "zh-CN",
       title: "fplayer -- Flutter plugin for video player",
-      description: "vuepress-theme-hope 的文档演示",
+      description: "fplayer的官方文档",
     },
     // "/en/": {
     //   lang: "en-US",

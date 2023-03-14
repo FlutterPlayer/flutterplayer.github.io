@@ -15,5 +15,11 @@ export const zhSidebar = sidebar({
       prefix: "basic/",
       children: "structure",
     },
+    {
+      text: "内核",
+      icon: "note",
+      prefix: "core/",
+      children: "structure",
+    }
   ],
 });
