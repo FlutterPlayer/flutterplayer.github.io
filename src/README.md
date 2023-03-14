@@ -50,7 +50,7 @@ fplayer 有内置的编译好的ffmepg 和 ijkplayer，分别托管在 Meven Cen
 
 * [fijkplayer](https://github.com/befovy/fijkplayer)
 * [ijkplayer](https://github.com/bilibili/ijkplayer)
-* [ffmpeg](https://github.com/bilibili/ijkplayer)
+* [ffmpeg](https://github.com/FFmpeg/FFmpeg)
 
 ------
 

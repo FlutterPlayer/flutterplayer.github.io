@@ -23,9 +23,9 @@ fplayer只是桥接了ijkplayer和flutter,ijkplayer才是真正的播放器内�
 -   # s.dependency 'fplayer-core', '~> 0.1.1' // 把原先这一行注释掉
 ```
 
-## Android
+## Android 
 
-编译参考 [此处](/core/build-android)
+编译参考 [此处](/core/build-android) 
 
 把文件 fplayer-core.aar 复制到 ${fijkplayer}/android/aars 目录中。 修改文件 ${fijkplayer}/android/build.gradle 中 dependencies 内容。
 ```git
