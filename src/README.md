@@ -18,29 +18,38 @@ footer: 使用 <a href="https://theme-hope.vuejs.press/" target="_blank">VuePres
 ---
 
 
-fplayer 是一个 Flutter 生态的媒体播放器，是对 [fijkplayer](https://github.com/befovy/fijkplayer) 的 Flutter 封装，支持 Android 和 iOS。
-fplayer 使用 ijkplayer 作为播放器内核。[ijkplayer](https://github.com/bilibili/ijkplayer) 使用 ffmpeg 进行音视频解封装和解码，同时添加了 Android 和 iOS 平台特有的硬件加速解码能力。
+fplayer 是一个 Flutter 生态的媒体播放器，是基于 [fijkplayer](https://github.com/befovy/fijkplayer) 的项目的二次开发，目前支持 Android 和 iOS , 后续准备支持 Mac 和 Windows。
+
+fplayer 使用 ijkplayer 作为播放器内核。[ijkplayer](https://github.com/bilibili/ijkplayer) 使用 ffmpeg 进行音视频解封装和解码延续ijkplayer的内核代码支持ios和安卓的硬解码。
+
+fplayer 的内核代码将托管至 [fpalyer-core](https://github.com/FlutterPlayer/ijkplayer)项目中，目前已经升级NDK版本至21安卓最低支持16这样做的目的是为了将部分java代码在后续的计划中逐步迁移至native c++代码，ios的SDK版本也升级到ios 11，同时剔除了armv7的版本支持 仅支持arm64 如果您这边有对其他指令支持的可以在项目中自行编译内核代码 具体的编译方法见[此处]()。
 
 fplayer 具有和 ijkplayer 一样的播放能力，并且开箱即用，不需要使用者再去编译 ijkplayer，API易用，易于在 Flutter 项目中集成。
 
-fplayer 通过纹理方式将播放器视频画面渲染接入 flutter 中，性能上优于 PlatformView 的接入方法。
-fplayer 有内置的编译好的ffmepg 和 ijkplayer，分别托管在 jcenter 和 CocoaPods 上。
+fplayer 有内置的编译好的ffmepg 和 ijkplayer，分别托管在 Meven Cental 和 CocoaPods 上。
 
 这个站点包含了大量的 fplayer 的文档帮助你使用以及理解 fplayer。
 
 ------
-&nbsp; &nbsp;
+&nbsp; 
 
-开启你的 fplayer 之旅：
+## 开启你的 fplayer 之旅：
 
 * 中文版 [开始使用](/)
-* English Version [Getting Started](/en/)
+<!-- * English Version [Getting Started](/en/) -->
 
 <!-- * Read news, hints and tips on our [developer blog][]. -->
 <!-- * Read the latest [release notes][]. -->
 <!-- * Browse the library [Javadoc][]. -->
 <!-- * Browse the source code for the [latest release][] and current [tip of tree][]. -->
+&nbsp;
 
+------
+
+## 鸣谢以下项目
+
+* [fijkplayer](https://github.com/befovy/fijkplayer)
+* [ijkplayer](https://github.com/bilibili/ijkplayer)
 
 ------
 
