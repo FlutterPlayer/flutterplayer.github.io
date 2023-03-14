@@ -94,7 +94,7 @@ FView 只做一件事：显示 FPlayer 解码后的视频内容。FView 几乎�
         <th>iOS</th>
     </tr></thead>
     <tbody><tr>
-        <td><img style="max-width: 340px" src="http://rr8xd5pn3.hn-bkt.clouddn.com/android-example.jpg" alt="Android demo 运行截图" /></td>
-        <td><img style="max-width: 340px" src="http://rr8xd5pn3.hn-bkt.clouddn.com/ios-example.jpg" alt="iOS demo 运行截图" /></td>
+        <td><img style="max-width: 340px" src="https://github.com/FlutterPlayer/flutterplayer.github.io/blob/master/images/android-example.jpg" alt="Android demo 运行截图" /></td>
+        <td><img style="max-width: 340px" src="https://github.com/FlutterPlayer/flutterplayer.github.io/blob/master/images/ios-example.jpg" alt="iOS demo 运行截图" /></td>
     </tr></tbody>
 </table>
