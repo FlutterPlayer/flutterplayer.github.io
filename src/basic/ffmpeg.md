@@ -17,8 +17,8 @@ title: ffmpeg参数相关
 
 ## 单次属性设置
 
-单次属性设置使用 `FijkPlayer` class 的方法。  
-参数 `category` 使用 `FijkOption` class 中的静态常量
+单次属性设置使用 `FPlayer` class 的方法。  
+参数 `category` 使用 `FOption` class 中的静态常量
 `formatCategory`, `codecCategory`，`swsCategory`, `playerCategory`, `swrCategory`。
 
 ```dart
@@ -31,13 +31,13 @@ value 可以是 String 或者 int 类型，分别用于设置字符串类型和�
 批量设置播放器属性使用 `applyOptions` 方法。
 
 ```dart
-Future<void> applyOptions(FijkOption fijkOption) async;
+Future<void> applyOptions(FOption fOption) async;
 ```
 
-先将所有的播放器属性设置在 dart 对象 fijkOption 中，然后在一次性传递给 native 层。
+先将所有的播放器属性设置在 dart 对象 fOption 中，然后在一次性传递给 native 层。
 
 ```dart
-class FijkOption {
+class FOption {
     void setPlayerOption(String key, dynamic value);
     void setFormatOption(String key, dynamic value);
     void setCodecOption(String key, dynamic value);

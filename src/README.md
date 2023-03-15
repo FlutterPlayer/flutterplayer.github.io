@@ -52,6 +52,18 @@ fplayer 有内置的编译好的ffmepg 和 ijkplayer，分别托管在 Meven Cen
 * [ijkplayer](https://github.com/bilibili/ijkplayer)
 * [ffmpeg](https://github.com/FFmpeg/FFmpeg)
 
+&nbsp;&nbsp;
+
+QQ交流群
+
+<table>
+  <tr>
+    <td>
+      <img src="/assets/images/qq.jpg"  height="200"/>
+    </td>
+  </tr>
+</table>
+
 ------
 
 <span><small> 由于个人能力限制，文档中难免不出现纰漏。  
