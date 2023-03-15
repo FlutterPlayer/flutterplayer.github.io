@@ -4,7 +4,7 @@ title: 导览
 
 ## 当前版本
 
-![pub](https://img.shields.io/pub/v/fplayer?label=fplayer&style=flat-square) ![ios](https://img.shields.io/cocoapods/v/fplayer-core?color=red&label=Ios%20Pods&style=flat-square) ![maven](https://img.shields.io/maven-central/v/io.github.flutterplayer/fijkplayer-full?color=blue&style=flat-square&label=Android%20AAR)
+![pub](https://img.shields.io/pub/v/fplayer?label=fplayer&style=flat-square) ![ios](https://img.shields.io/cocoapods/v/fplayer-core?color=red&label=Ios%20Pods&style=flat-square) ![maven](https://img.shields.io/maven-central/v/io.github.flutterplayer/fplayer-core?color=blue&style=flat-square&label=Android%20AAR)
 
 以上是目前版本的情况,可根据你的情况进行选择对应的版本进行依赖
 
