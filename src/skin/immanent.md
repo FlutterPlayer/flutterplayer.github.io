@@ -1,0 +1,373 @@
+---
+title: 内置UI
+---
+
+fplayer除了默认皮肤外，还提供了高级皮肤，本节是对默认皮肤和高级皮肤的介绍。
+
+## 默认皮肤
+默认UI主要实现了一个播放器最基础的能力。
+
+用法如下:
+
+```dart
+FView(
+  player: player,
+  panelBuilder: defaultFPanelBuilder, // 可省略
+)
+```
+
+运行截图:
+
+<img src="/assets/images/default-ui.jpg" style="max-height: 300px"/>
+
+## 高级皮肤
+高级皮肤是对默认UI的扩展，提供了一个更高级的panel builder函数，主要分为四个部分（单视频模式、多视频模式、基础功能与进阶功能介绍以及API）。
+
+### 单视频模式配置
+只需要播放一个视频时的配置
+
+用法如下:
+
+```dart
+@override
+void initState() {
+  super.initState();
+  // 播放传入的视频
+  player.setDataSource(widget.url, autoPlay: true, showCover: true);
+}
+
+@override
+void dispose() {
+  super.dispose();
+  player.release();
+}
+
+FView(
+  player: player,
+  width: double.infinity,
+  height: videoHeight, // 需自行设置，此处宽度/高度=16/9
+  color: Colors.black,
+  fsFit: FFit.contain, // 全屏模式下的填充
+  fit: FFit.fill, // 正常模式下的填充
+  panelBuilder: fPanelBuilder(
+    title: '视频标题',
+    subTitle: '视频副标题',
+  ),
+)
+```
+
+运行截图:
+
+<table>
+  <thead>
+    <tr>
+      <th>小屏模式</th>
+      <th>全屏模式</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><img style="max-width: 200px" src="/assets/images/video-ui-vertical.jpg" alt="单视频 小屏模式 demo 运行截图" /></td>
+      <td><img style="max-height: 300px" src="/assets/images/video-ui-horizontal.jpg" alt="单视频 全屏模式 demo 运行截图" /></td>
+    </tr>
+  </tbody>
+</table>
+
+### 多视频模式配置
+需要播放视频列表时的配置（当一个视频播放完成时自动播放下一个视频等需求）
+
+用法如下:
+
+首先需要配置一些变量与方法
+
+```dart
+// 视频列表
+List<VideoItem> videoList = [
+  VideoItem(
+    title: '第一集',
+    subTitle: '视频1副标题',
+    url: 'http://player.alicdn.com/video/aliyunmedia.mp4',
+  ),
+  VideoItem(
+    title: '第二集',
+    subTitle: '视频2副标题',
+    url: 'https://www.runoob.com/try/demo_source/mov_bbb.mp4',
+  ),
+  VideoItem(
+    title: '第三集',
+    subTitle: '视频3副标题',
+    url: 'http://player.alicdn.com/video/aliyunmedia.mp4',
+  ),
+];
+
+// 视频索引,单个视频可不传
+int videoIndex = 0;
+
+// 播放传入的url
+Future<void> setVideoUrl(String url) async {
+  try {
+    await player.setDataSource(url, autoPlay: true, showCover: true);
+  } catch (error) {
+    print("播放-异常: $error");
+    return;
+  }
+}
+
+@override
+void initState() {
+  super.initState();
+  // 播放视频列表的第一个视频
+  setVideoUrl(videoList[videoIndex].url);
+}
+
+@override
+void dispose() {
+  super.dispose();
+  player.release();
+}
+```
+
+然后需要把这两个变量传给FView
+
+```dart
+Column(
+  children: [
+    FView(
+      player: player,
+      width: double.infinity,
+      height: videoHeight, // 需自行设置，此处宽度/高度=16/9
+      color: Colors.black,
+      fsFit: FFit.contain, // 全屏模式下的填充
+      fit: FFit.fill, // 正常模式下的填充
+      panelBuilder: fPanelBuilder(
+        // 视频列表开关
+        isVideos: true,
+        // 视频列表列表
+        videoList: videoList,
+        // 当前视频索引
+        videoIndex: videoIndex,
+        // 全屏模式下点击播放下一集视频回调
+        playNextVideoFun: () {
+          setState(() {
+            videoIndex += 1;
+          });
+        },
+        // 视频播放完成回调
+        onVideoEnd: () async {
+          var index = videoIndex + 1;
+          if (index < videoList.length) {
+            await player.reset();
+            setState(() {
+              videoIndex = index;
+            });
+            setVideoUrl(videoList[index].url);
+          }
+        },
+      ),
+    ),
+    // 自定义小屏列表
+    Container(
+      width: double.infinity,
+      height: 30,
+      margin: const EdgeInsets.all(20),
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        padding: EdgeInsets.zero,
+        itemCount: videoList.length,
+        itemBuilder: (context, index) {
+          bool isCurrent = videoIndex == index;
+          Color textColor = Theme.of(context).primaryColor;
+          Color bgColor = Theme.of(context).primaryColorDark;
+          Color borderColor = Theme.of(context).primaryColor;
+          if (isCurrent) {
+            textColor = Theme.of(context).primaryColorDark;
+            bgColor = Theme.of(context).primaryColor;
+            borderColor = Theme.of(context).primaryColor;
+          }
+          return GestureDetector(
+            onTap: () async {
+              await player.reset();
+              setState(() {
+                videoIndex = index;
+              });
+              setVideoUrl(videoList[index].url);
+            },
+            child: Container(
+              margin: EdgeInsets.only(left: index == 0 ? 0 : 10),
+              padding: const EdgeInsets.symmetric(horizontal: 5),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(5),
+                color: bgColor,
+                border: Border.all(
+                  width: 1.5,
+                  color: borderColor,
+                ),
+              ),
+              alignment: Alignment.center,
+              child: Text(
+                videoList[index].title,
+                style: TextStyle(
+                  fontSize: 15,
+                  color: textColor,
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    ),
+  ],
+)
+```
+
+运行截图:
+
+<table>
+  <thead>
+    <tr>
+      <th>小屏模式</th>
+      <th>全屏模式</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><img style="max-width: 200px" src="/assets/images/videos-ui-vertical.jpg" alt="多视频 小屏模式 demo 运行截图" /></td>
+      <td><img style="max-height: 300px" src="/assets/images/videos-ui-horizontal.jpg" alt="多视频 全屏模式 demo 运行截图" /></td>
+    </tr>
+  </tbody>
+</table>
+
+### 基础功能与进阶功能介绍
+基础功能是指播放器自带的一些功能，无法修改，进阶功能可以自定义配置
+
+用法如下:
+
+```dart
+// 倍速列表
+Map<String, double> speedList = {
+  "2.0": 2.0,
+  "1.5": 1.5,
+  "1.0": 1.0,
+  "0.5": 0.5,
+};
+
+// 清晰度列表
+Map<String, ResolutionItem> resolutionList = {
+  "480P": ResolutionItem(
+    value: 480,
+    url: 'https://www.runoob.com/try/demo_source/mov_bbb.mp4',
+  ),
+  "270P": ResolutionItem(
+    value: 270,
+    url: 'http://player.alicdn.com/video/aliyunmedia.mp4',
+  ),
+};
+
+// 模拟播放记录视频初始化完需要跳转的进度
+int seekTime = 100000;
+
+fPanelBuilder(
+  // 右下方截屏按钮
+  isSnapShot: true,
+  // 右上方按钮组开关
+  isRightButton: true,
+  // 右上方按钮组
+  rightButtonList: [
+    InkWell(
+      onTap: () {},
+      child: Container(
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          color: Theme.of(context).primaryColorLight,
+          borderRadius: const BorderRadius.vertical(
+            top: Radius.circular(5),
+          ),
+        ),
+        child: Icon(
+          Icons.favorite,
+          color: Theme.of(context).primaryColor,
+        ),
+      ),
+    ),
+    InkWell(
+      onTap: () {},
+      child: Container(
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          color: Theme.of(context).primaryColorLight,
+          borderRadius: const BorderRadius.vertical(
+            bottom: Radius.circular(5),
+          ),
+        ),
+        child: Icon(
+          Icons.thumb_up,
+          color: Theme.of(context).primaryColor,
+        ),
+      ),
+    )
+  ],
+  // 自定义倍速列表
+  speedList: speedList,
+  // 清晰度开关
+  isResolution: true,
+  // 自定义清晰度列表
+  resolutionList: resolutionList,
+  settingFun: () {
+    print('设置按钮点击事件');
+  },
+  // 视频播放错误点击刷新回调
+  onError: () async {
+    await player.reset();
+    setVideoUrl(videoList[videoIndex].url);
+  },
+  onVideoTimeChange: () {
+    // 视频时间变动则触发一次，可以保存视频历史
+  },
+  onVideoPrepared: () async {
+    // 视频初始化完毕，如有历史记录时间段则可以触发快进
+    try {
+      if (seekTime >= 1) {
+        /// seekTo必须在FState.prepared
+        print('seekTo');
+        await player.seekTo(seekTime);
+        // print("视频快进-$seekTime");
+        seekTime = 0;
+      }
+    } catch (error) {
+      print("视频初始化完快进-异常: $error");
+    }
+  },
+)
+```
+
+运行截图:
+
+<img src="/assets/images/videos-ui-all.jpg" style="max-height: 300px"/>
+
+### API
+
+属性
+
+| 属性名             | 类型     | 描述                          |
+|-----------------|--------|-----------------------------|
+| title           | String | 单视频模式视频标题                   |
+| subTitle        | String | 单视频模式视频副标题                  |
+| isSnapShot      | bool   | 是否显示截图按钮，默认为false           |
+| isRightButton   | bool   | 是否显示全屏模式中间区域右上方按钮组，默认为false |
+| rightButtonList | List   | 全屏模式中间区域右上方按钮组，建议不超过三个      |
+| isVideos        | bool   | 是否为多视频模式，默认为false           |
+| videoList       | List   | 多视频列表                       |
+| speedList       | List   | 倍速列表                        |
+| isResolution    | bool   | 是否显示清晰度按钮，默认为false          |
+| resolutionList  | List   | 清晰度列表                       |
+
+方法
+
+| 方法名               | 描述                         |
+|-------------------|----------------------------|
+| playNextVideoFun  | 多视频模式全屏状态下点击播放下一集按钮事件      |
+| settingFun        | 点击右上角设置按钮事件                |
+| onError           | 视频播放错误点击刷新回调               |
+| onVideoEnd        | 视频播放完成回调                   |
+| onVideoTimeChange | 视频时间变动则触发一次，可以保存视频播放历史     |
+| onVideoPrepared   | 视频初始化完毕回调，如有历史记录时间段则可以触发快进 |

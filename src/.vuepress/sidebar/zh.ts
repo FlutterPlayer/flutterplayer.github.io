@@ -10,14 +10,20 @@ export const zhSidebar = sidebar({
       children: "structure",
     },
     {
+      text: "皮肤",
+      icon: "style",
+      prefix: "skin/",
+      children: "structure",
+    },
+    {
       text: "基础",
-      icon: "note",
+      icon: "module",
       prefix: "basic/",
       children: "structure",
     },
     {
       text: "内核",
-      icon: "note",
+      icon: "process",
       prefix: "core/",
       children: "structure",
     }
