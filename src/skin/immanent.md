@@ -338,7 +338,6 @@ fPanelBuilder(
     }
   },
 )
-
 ```
 
 运行截图:
@@ -349,18 +348,18 @@ fPanelBuilder(
 
 属性
 
-| 属性名             | 类型                   | 描述                          |
-|-----------------|----------------------|-----------------------------|
-| title           | String               | 单视频模式视频标题                   |
-| subTitle        | String               | 单视频模式视频副标题                  |
-| isSnapShot      | bool                 | 是否显示截图按钮，默认为false           |
-| isRightButton   | bool                 | 是否显示全屏模式中间区域右上方按钮组，默认为false |
-| rightButtonList | List<Widget>         | 全屏模式中间区域右上方按钮组，建议不超过三个      |
-| isVideos        | bool                 | 是否为多视频模式，默认为false           |
-| videoList       | List<VideoItem>      | 多视频列表                       |
-| speedList       | List<Map>            | 倍速列表                        |
-| isResolution    | bool                 | 是否显示清晰度按钮，默认为false          |
-| resolutionList  | List<ResolutionItem> | 清晰度列表                       |
+| 属性名             | 类型      | 描述                          |
+|-----------------|---------|-----------------------------|
+| title           | String  | 单视频模式视频标题                   |
+| subTitle        | String  | 单视频模式视频副标题                  |
+| isSnapShot      | bool    | 是否显示截图按钮，默认为false           |
+| isRightButton   | bool    | 是否显示全屏模式中间区域右上方按钮组，默认为false |
+| rightButtonList | List    | 全屏模式中间区域右上方按钮组，建议不超过三个      |
+| isVideos        | bool    | 是否为多视频模式，默认为false           |
+| videoList       | List    | 多视频列表                       |
+| speedList       | List    | 倍速列表                        |
+| isResolution    | bool    | 是否显示清晰度按钮，默认为false          |
+| resolutionList  | List    | 清晰度列表                       |
 
 方法
 
