@@ -338,11 +338,12 @@ fPanelBuilder(
     }
   },
 )
+
 ```
 
 运行截图:
 
-<img src="/assets/images/videos-ui-all.jpg" style="max-height: 300px"/>
+<img src="/assets/images/videos-ui-all.jpg" style="max-height: 300px" />
 
 ### API
 
