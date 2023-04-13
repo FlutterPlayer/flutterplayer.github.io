@@ -126,5 +126,6 @@ $ flutter build ios --no-codesign
 * 如果 build apk 时太久时间没有输出，可以先在 android 目录运行 `./gradlew` 检查 gradle 环境是否正确。
 * pod install 安装依赖需要从 github 下载底层 ijkplayer 的二进制文件，如果网不好可能会很慢。  
   建议在 ios 文件夹中运行 `pod install --verbose` 查看实时下载进度。
+* ios可调试环境：flutter 3.3.10、xcode 14.2
 
 Flutter 中安装 fplayer 的内容到这里就结束了，有任何问题请在 [github issues](https://github.com/FlutterPlayer/fplayer/issues) 中进行提问。
