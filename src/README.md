@@ -67,4 +67,26 @@ QQ交流群
 ------
 
 <span><small> 由于个人能力限制，文档中难免不出现纰漏。  
-如果您在阅读时发现任何不当或者错误内容，请在 [github issues](https://github.com/FlutterPlayer/fplayer/issues) 上进行指正，或直接提交 [pull request](https://github.com/FlutterPlayer/fplayer/pulls)。 </small></span>
+如果您在阅读时发现任何不当或者错误内容，请在 [github issues](https://github.com/FlutterPlayer/fplayer/issues) 上进行指正，或直接提交 [pull request](https://github.com/FlutterPlayer/fplayer/pulls)。</small></span>
+
+<span><small>感谢您的关注！开源不易，需要开发者们的不断努力和付出。如果您觉得我的项目对您有所帮助，希望能够支持我继续改进和维护这个项目，您可以考虑打赏我一杯咖啡的钱。
+您的支持将是我继续前进的动力，让我能够更加专注地投入到开源社区中，让我的项目变得更加完善和有用。如果您决定打赏我，可以通过以下方式：</small></span>
+<ul>
+    <li>给该项目点赞 &nbsp;<a style="vertical-align: text-bottom;" href="https://github.com/FlutterPlayer/fplayer">
+      <img src="https://img.shields.io/github/stars/FlutterPlayer/fplayer.svg?label=Stars&style=social" alt="给该项目点赞" />
+    </a></li>
+    <li>关注我的 Github &nbsp;<a style="vertical-align: text-bottom;"  href="https://github.com/FlutterPlayer">
+      <img src="https://img.shields.io/github/followers/FlutterPlayer.svg?label=Follow&style=social" alt="关注我的 Github" />
+    </a></li>
+</ul>
+<table>
+    <thead><tr>
+        <th>微信</th>
+        <th>支付宝</th>
+    </tr></thead>
+    <tbody><tr>
+        <td><img style="max-width: 150px" src="/assets/images/wx.png" alt="微信" /></td>
+        <td><img style="max-width: 150px" src="/assets/images/zfb.png" alt="支付宝" /></td>
+    </tr></tbody>
+</table>
+再次感谢您的支持和慷慨，让我们一起为开源社区贡献一份力量！
