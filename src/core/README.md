@@ -12,7 +12,7 @@ fplayer只是桥接了ijkplayer和flutter,ijkplayer才是真正的播放器内�
 
 编译参考 [此处](/core/build-iOS)
 
-把文件 IJKMediaPlayer.framework 复制到 ${fijkplayer}/ios/Frameworks 目录中。 修改文件 ${fijkplayer}/ios/fijkplayer.podsped 文件内容。
+把文件 IJKMediaPlayer.framework 复制到 ${fplayer}/ios/Frameworks 目录中。 修改文件 ${fplayer}/ios/fplayer.podsped 文件内容。
 
 ```git
 +   # 去掉这三行原先的注释  
