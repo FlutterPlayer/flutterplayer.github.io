@@ -6,7 +6,7 @@ title: 播放器状态
 
 |状态名|播放器表现|
 |----|----|
-|idle| 闲置状态，刚完成构造的 FijkPlayer 处于此状态。 <br> 此状态下播放器占用少量内存，无额外线程启动。 <br> idle 状态只能通过 setDataSource 转换为 initialized 状态 |
+|idle| 闲置状态，刚完成构造的 FPlayer 处于此状态。 <br> 此状态下播放器占用少量内存，无额外线程启动。 <br> idle 状态只能通过 setDataSource 转换为 initialized 状态 |
 |initialized| 初始化完成状态，和 idle 状态相比，仅是多了输入媒体数据源的信息。 同样无额外线程打开。 |
 |asyncPreparing| 异步准备状态，在 initialized 状态调用 prepareAsync 到达此状态。  <br> 这不是一个稳定状态，此状态等待特定任务完成后自动转化为 prepared 状态。 <br> 这一状态的主要准备工作是 探测媒体文件类型，打开媒体文件，打开解码器以及新建解码线程，新建数据 read 线程，打开音频输出设备，新建视频输出线程等。|
 |prepared| asyncPreparing 完成指定任务后自动转化为此状态。 <br> 此状态下已经开始缓冲解码了一部分音视频数据，可以随时进行播放。 |
