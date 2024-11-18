@@ -15,7 +15,7 @@ fplayer只是桥接了ijkplayer和flutter,ijkplayer才是真正的播放器内�
 把文件 IJKMediaPlayer.framework 复制到 ${fplayer}/ios/Frameworks 目录中。 修改文件 ${fplayer}/ios/fplayer.podsped 文件内容。
 
 ```git
-+   # 去掉这三行原先的注释  
++   # 去掉这三行原先的注释
 +   s.preserve_paths = 'Frameworks/*.framework'
 +   s.vendored_frameworks = 'Frameworks/IJKPlayer.framework'
 +   s.xcconfig = { 'LD_RUNPATH_SEARCH_PATHS' => '"$(PODS_ROOT)/Frameworks/"' }
@@ -23,12 +23,18 @@ fplayer只是桥接了ijkplayer和flutter,ijkplayer才是真正的播放器内�
 -   # s.dependency 'fplayer-core', '~> 0.1.1' // 把原先这一行注释掉
 ```
 
-## Android 
+## Android
 
-编译参考 [此处](/core/build-android) 
+编译参考 [此处](/core/build-android)
 
 把文件 fplayer-core.aar 复制到 ${fplayer}/android/aars 目录中。 修改文件 ${fplayer}/android/build.gradle 中 dependencies 内容。
 ```git
 -    implementation 'io.github.flutterplayer:fplayer-core:1.0.0' // 注释掉这一行
 +    implementation(name: 'fplayer-core', ext: 'aar')  // 去掉这行原先的注释
 ```
+
+## HarmonyOS
+
+鸿蒙系统需要先将Flutter的环境准备好可以[参考](/core/harmonyos-init)
+
+准备好了之后就可以开始编译相关的内核代码
