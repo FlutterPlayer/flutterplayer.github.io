@@ -27,10 +27,19 @@ fplayer只是桥接了ijkplayer和flutter,ijkplayer才是真正的播放器内�
 
 编译参考 [此处](/core/build-android)
 
+### fplayer 1.1.3 之前的版本 不含1.1.3
+
 把文件 fplayer-core.aar 复制到 ${fplayer}/android/aars 目录中。 修改文件 ${fplayer}/android/build.gradle 中 dependencies 内容。
 ```git
 -    implementation 'io.github.flutterplayer:fplayer-core:1.0.0' // 注释掉这一行
 +    implementation(name: 'fplayer-core', ext: 'aar')  // 去掉这行原先的注释
+```
+
+### fplayer 1.1.3 之后的版本包含 1.1.3
+把文件 fplayer-core.aar 复制到 ${插件源码}/android/aars 目录中。 修改文件 ${插件源码}/android/build.gradle 中 dependencies 内容。
+```git
+-    implementation 'io.github.flutterplayer:fplayer-core:1.0.0' // 注释掉这一行
++    implementation fileTree(dir: 'aars', include: ['*.aar']) // 去掉这行原先的注释或者添加这行
 ```
 
 ## HarmonyOS
