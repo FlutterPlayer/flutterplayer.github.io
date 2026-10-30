@@ -1,7 +1,7 @@
 ---
 home: true
 icon: home
-title: Flutter 跨端媒体播放器
+title: Fplayer
 description: 一套 Dart API，连接 Android、iOS、macOS、Windows 和 OpenHarmony 的原生 fplayercore 内核。
 heroText: Fplayer
 tagline: 一套 Dart，五端原生播放

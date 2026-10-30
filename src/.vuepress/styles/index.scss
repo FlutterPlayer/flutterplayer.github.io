@@ -4,7 +4,7 @@
 main.home {
   max-width: none;
   padding: 0;
-  background: #07110f;
+  background: #061012;
 }
 
 main.home > .hero-info-wrapper {
@@ -18,12 +18,12 @@ main.home .theme-hope-content {
 }
 
 body:has(.fp-home) {
-  background: #07110f;
+  background: #061012;
 }
 
 body:has(.fp-home) .navbar {
-  border-bottom-color: rgba(222, 246, 233, 0.12);
-  background: rgba(7, 17, 15, 0.78);
+  border-bottom-color: rgba(214, 244, 246, 0.12);
+  background: rgba(6, 16, 18, 0.78);
   backdrop-filter: blur(18px);
 }
 
@@ -31,13 +31,13 @@ body:has(.fp-home) .navbar .brand,
 body:has(.fp-home) .navbar .nav-links a,
 body:has(.fp-home) .navbar .site-name,
 body:has(.fp-home) .navbar .toggle-sidebar-button {
-  color: #eff8f2;
+  color: #effafb;
 }
 
 body:has(.fp-home) .navbar .nav-links a.active,
 body:has(.fp-home) .navbar .nav-links a:hover {
-  border-color: #b6f36b;
-  color: #b6f36b;
+  border-color: #12c9d6;
+  color: #12c9d6;
 }
 
 body:has(.fp-home) .navbar .logo {
@@ -46,9 +46,9 @@ body:has(.fp-home) .navbar .logo {
 }
 
 body:has(.fp-home) .footer-wrapper {
-  border-top: 1px solid rgba(222, 246, 233, 0.12);
-  color: #99b0a5;
-  background: #07110f;
+  border-top: 1px solid rgba(214, 244, 246, 0.12);
+  color: #9bb4b7;
+  background: #061012;
 }
 
 body:has(.fp-home) .back-to-top {
@@ -56,7 +56,7 @@ body:has(.fp-home) .back-to-top {
 }
 
 body:has(.fp-home) .footer-wrapper a {
-  color: #b6f36b;
+  color: #12c9d6;
 }
 
 @media (max-width: 720px) {

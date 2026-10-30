@@ -31,7 +31,7 @@ const platforms: Platform[] = [
     facts: ['NDK 29 与 16 KB 页对齐', 'Texture 纹理输出', '音轨查询与切换'],
     track: 'English · AAC',
     codec: '48 kHz · stereo',
-    accent: '#b6f36b',
+    accent: '#12c9d6',
   },
   {
     id: 'ios',
@@ -44,7 +44,7 @@ const platforms: Platform[] = [
     facts: ['Device / arm64 simulator', 'VideoToolbox 硬解', 'SwiftPM binaryTarget'],
     track: 'Japanese · AAC',
     codec: '48 kHz · stereo',
-    accent: '#a9e7ff',
+    accent: '#6fe4eb',
   },
   {
     id: 'macos',
@@ -57,7 +57,7 @@ const platforms: Platform[] = [
     facts: ['Metal / CoreVideo', '窗口与全屏适配', '同一套音轨 API'],
     track: 'English · AAC',
     codec: '48 kHz · stereo',
-    accent: '#c7c4ff',
+    accent: '#9af1f4',
   },
   {
     id: 'windows',
@@ -70,7 +70,7 @@ const platforms: Platform[] = [
     facts: ['CMake + fplayercore.dll', '纹理帧回传', '与 Dart API 对齐'],
     track: 'English · AAC',
     codec: '48 kHz · stereo',
-    accent: '#ffd38a',
+    accent: '#36dbe6',
   },
   {
     id: 'ohos',
@@ -83,7 +83,7 @@ const platforms: Platform[] = [
     facts: ['NAPI / ArkTS 桥接', 'OHOS HAR 分发', '音轨选择可用'],
     track: 'Chinese · AAC',
     codec: '48 kHz · stereo',
-    accent: '#ffadc2',
+    accent: '#2bb8c5',
   },
 ];
 
@@ -575,15 +575,15 @@ onBeforeUnmount(() => {
 
 <style scoped>
 .fp-home {
-  --fp-bg: #07110f;
-  --fp-surface: #0c1b17;
-  --fp-surface-raised: #11251f;
-  --fp-ink: #eff8f2;
-  --fp-muted: #99b0a5;
-  --fp-line: rgba(222, 246, 233, 0.14);
-  --fp-mint: #b6f36b;
-  --fp-cyan: #a9e7ff;
-  --fp-amber: #ffd38a;
+  --fp-bg: #061012;
+  --fp-surface: #0b1a1d;
+  --fp-surface-raised: #102528;
+  --fp-ink: #effafb;
+  --fp-muted: #9bb4b7;
+  --fp-line: rgba(214, 244, 246, 0.14);
+  --fp-mint: #12c9d6;
+  --fp-cyan: #6fe4eb;
+  --fp-amber: #36dbe6;
   --fp-display: 'Space Grotesk Variable', 'Space Grotesk', 'Avenir Next', 'PingFang SC', sans-serif;
   --fp-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
   position: relative;
@@ -615,8 +615,8 @@ onBeforeUnmount(() => {
   min-height: min(900px, 100svh);
   padding: clamp(7.5rem, 14vh, 10.5rem) 0 4rem;
   background:
-    radial-gradient(ellipse 65% 55% at 76% 38%, rgba(182, 243, 107, 0.11), transparent 70%),
-    radial-gradient(ellipse 50% 40% at 20% 10%, rgba(169, 231, 255, 0.08), transparent 72%),
+    radial-gradient(ellipse 65% 55% at 76% 38%, rgba(18, 201, 214, 0.11), transparent 70%),
+    radial-gradient(ellipse 50% 40% at 20% 10%, rgba(18, 201, 214, 0.08), transparent 72%),
     var(--fp-bg);
 }
 
@@ -624,8 +624,8 @@ onBeforeUnmount(() => {
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(rgba(222, 246, 233, 0.055) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(222, 246, 233, 0.055) 1px, transparent 1px);
+    linear-gradient(rgba(214, 244, 246, 0.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(214, 244, 246, 0.055) 1px, transparent 1px);
   background-size: 72px 72px;
   mask-image: radial-gradient(ellipse 75% 65% at 50% 36%, #000 12%, transparent 78%);
   pointer-events: none;
@@ -645,13 +645,13 @@ onBeforeUnmount(() => {
 .fp-glow-a {
   top: 10%;
   right: 6%;
-  background: rgba(182, 243, 107, 0.16);
+  background: rgba(18, 201, 214, 0.16);
 }
 
 .fp-glow-b {
   bottom: -12%;
   left: 12%;
-  background: rgba(169, 231, 255, 0.12);
+  background: rgba(18, 201, 214, 0.12);
 }
 
 .fp-hero-inner {
@@ -680,7 +680,7 @@ onBeforeUnmount(() => {
   height: 0.48rem;
   border-radius: 50%;
   background: var(--fp-mint);
-  box-shadow: 0 0 0 0 rgba(182, 243, 107, 0.45);
+  box-shadow: 0 0 0 0 rgba(18, 201, 214, 0.45);
   animation: fp-pulse 2.4s ease-out infinite;
 }
 
@@ -735,7 +735,7 @@ onBeforeUnmount(() => {
 }
 
 .fp-button--primary {
-  color: #0a160f;
+  color: #041416;
   background: var(--fp-mint);
 }
 
@@ -744,7 +744,7 @@ onBeforeUnmount(() => {
   font-size: 0.9rem;
   font-weight: 500;
   text-decoration: underline;
-  text-decoration-color: rgba(239, 248, 242, 0.35);
+  text-decoration-color: rgba(239, 250, 251, 0.35);
   text-underline-offset: 0.3em;
   transition: color 160ms ease, text-decoration-color 160ms ease;
 }
@@ -810,7 +810,7 @@ onBeforeUnmount(() => {
 .fp-orbit-ring--inner {
   width: 55%;
   height: 55%;
-  border-color: rgba(182, 243, 107, 0.24);
+  border-color: rgba(18, 201, 214, 0.24);
 }
 
 .fp-orbit-axis {
@@ -818,8 +818,8 @@ onBeforeUnmount(() => {
   inset: 8%;
   border-radius: 50%;
   background:
-    linear-gradient(90deg, transparent 49.8%, rgba(222, 246, 233, 0.08) 50%, transparent 50.2%),
-    linear-gradient(transparent 49.8%, rgba(222, 246, 233, 0.08) 50%, transparent 50.2%);
+    linear-gradient(90deg, transparent 49.8%, rgba(214, 244, 246, 0.08) 50%, transparent 50.2%),
+    linear-gradient(transparent 49.8%, rgba(214, 244, 246, 0.08) 50%, transparent 50.2%);
   pointer-events: none;
 }
 
@@ -832,11 +832,11 @@ onBeforeUnmount(() => {
   height: 7.2rem;
   place-items: center;
   gap: 0.2rem;
-  border: 1px solid rgba(182, 243, 107, 0.36);
+  border: 1px solid rgba(18, 201, 214, 0.36);
   border-radius: 50%;
   color: var(--fp-mint);
   background: rgba(12, 27, 23, 0.86);
-  box-shadow: 0 0 60px rgba(182, 243, 107, 0.12);
+  box-shadow: 0 0 60px rgba(18, 201, 214, 0.12);
   transform: translate(-50%, -50%);
 }
 
@@ -1118,9 +1118,9 @@ onBeforeUnmount(() => {
   aspect-ratio: 0.62;
   margin: 0 auto;
   padding: 0.55rem;
-  border: 1px solid rgba(239, 248, 242, 0.22);
+  border: 1px solid rgba(239, 250, 251, 0.22);
   border-radius: 32px;
-  background: #091410;
+  background: #081416;
   box-shadow: 0 26px 70px rgba(0, 0, 0, 0.35), inset 0 0 0 1px rgba(0, 0, 0, 0.4);
 }
 
@@ -1139,7 +1139,7 @@ onBeforeUnmount(() => {
   width: 4.2rem;
   height: 0.55rem;
   border-radius: 0 0 0.6rem 0.6rem;
-  background: #091410;
+  background: #081416;
   transform: translateX(-50%);
 }
 
@@ -1155,7 +1155,7 @@ onBeforeUnmount(() => {
   width: 0.38rem;
   height: 0.38rem;
   border-radius: 50%;
-  background: rgba(239, 248, 242, 0.28);
+  background: rgba(239, 250, 251, 0.28);
 }
 
 .fp-device-bar-title {
@@ -1170,7 +1170,7 @@ onBeforeUnmount(() => {
   min-height: 0;
   overflow: hidden;
   border-radius: 26px;
-  background: #101e19;
+  background: #0e2023;
 }
 
 .fp-device--desktop .fp-device-screen {
@@ -1202,7 +1202,7 @@ onBeforeUnmount(() => {
   border-radius: 9px;
   background:
     radial-gradient(circle at 70% 30%, rgba(255, 211, 138, 0.24), transparent 28%),
-    linear-gradient(135deg, #24473b, #142a2b 46%, #31212b);
+    linear-gradient(135deg, #16434a, #12262b 46%, #2b2130);
 }
 
 .fp-screen-video::before {
@@ -1218,7 +1218,7 @@ onBeforeUnmount(() => {
   position: absolute;
   width: 42%;
   aspect-ratio: 1;
-  border: 1px solid rgba(239, 248, 242, 0.18);
+  border: 1px solid rgba(239, 250, 251, 0.18);
   border-radius: 50%;
   transform: rotate(32deg) scaleY(0.42);
 }
@@ -1230,17 +1230,17 @@ onBeforeUnmount(() => {
   width: 2rem;
   height: 2rem;
   place-items: center;
-  border: 1px solid rgba(239, 248, 242, 0.36);
+  border: 1px solid rgba(239, 250, 251, 0.36);
   border-radius: 50%;
   color: var(--fp-ink);
-  background: rgba(7, 17, 15, 0.45);
+  background: rgba(6, 16, 18, 0.45);
 }
 
 .fp-screen-caption {
   position: absolute;
   right: 0.55rem;
   bottom: 0.45rem;
-  color: rgba(239, 248, 242, 0.62);
+  color: rgba(239, 250, 251, 0.62);
   font-family: var(--fp-mono);
   font-size: 0.46rem;
 }
@@ -1250,7 +1250,7 @@ onBeforeUnmount(() => {
   margin: 0.6rem 0.8rem 0;
   overflow: hidden;
   border-radius: 999px;
-  background: rgba(239, 248, 242, 0.12);
+  background: rgba(239, 250, 251, 0.12);
 }
 
 .fp-screen-progress span {
@@ -1264,9 +1264,9 @@ onBeforeUnmount(() => {
 .fp-screen-tracks {
   margin: 0.8rem 0.7rem;
   padding: 0.65rem;
-  border: 1px solid rgba(239, 248, 242, 0.08);
+  border: 1px solid rgba(239, 250, 251, 0.08);
   border-radius: 8px;
-  background: rgba(7, 17, 15, 0.28);
+  background: rgba(6, 16, 18, 0.28);
 }
 
 .fp-screen-tracks-head,
@@ -1293,7 +1293,7 @@ onBeforeUnmount(() => {
 .fp-screen-track > i {
   width: 0.34rem;
   height: 0.34rem;
-  border: 1px solid rgba(239, 248, 242, 0.35);
+  border: 1px solid rgba(239, 250, 251, 0.35);
   border-radius: 50%;
 }
 
@@ -1315,7 +1315,7 @@ onBeforeUnmount(() => {
 .fp-screen-track.is-selected > i {
   border-color: var(--fp-mint);
   background: var(--fp-mint);
-  box-shadow: 0 0 0 3px rgba(182, 243, 107, 0.12);
+  box-shadow: 0 0 0 3px rgba(18, 201, 214, 0.12);
 }
 
 .fp-screen-track.is-selected > b {
@@ -1329,7 +1329,7 @@ onBeforeUnmount(() => {
   width: 2.8rem;
   height: 0.18rem;
   border-radius: 999px;
-  background: rgba(239, 248, 242, 0.35);
+  background: rgba(239, 250, 251, 0.35);
   transform: translateX(-50%);
 }
 
@@ -1401,7 +1401,7 @@ onBeforeUnmount(() => {
   grid-column: span 8;
   min-height: 300px;
   background:
-    radial-gradient(circle at 88% 16%, rgba(169, 231, 255, 0.09), transparent 34%),
+    radial-gradient(circle at 88% 16%, rgba(18, 201, 214, 0.09), transparent 34%),
     var(--fp-surface);
 }
 
@@ -1476,7 +1476,7 @@ onBeforeUnmount(() => {
   padding: 0.42rem 0.5rem;
   border: 1px solid var(--fp-line);
   border-radius: 5px;
-  background: rgba(7, 17, 15, 0.28);
+  background: rgba(6, 16, 18, 0.28);
 }
 
 .fp-pipeline i {
@@ -1507,7 +1507,7 @@ onBeforeUnmount(() => {
 
 .fp-track-preview div:first-child {
   color: var(--fp-ink);
-  background: rgba(182, 243, 107, 0.06);
+  background: rgba(18, 201, 214, 0.06);
 }
 
 .fp-track-preview i {
@@ -1585,7 +1585,7 @@ onBeforeUnmount(() => {
   overflow: hidden;
   border: 1px solid var(--fp-line);
   border-radius: 16px;
-  background: #091410;
+  background: #081416;
   box-shadow: 0 24px 70px rgba(0, 0, 0, 0.28);
 }
 
@@ -1614,7 +1614,7 @@ onBeforeUnmount(() => {
   width: 0.4rem;
   height: 0.4rem;
   border-radius: 50%;
-  background: rgba(239, 248, 242, 0.2);
+  background: rgba(239, 250, 251, 0.2);
 }
 
 .fp-code-bar > span:last-child {
@@ -1625,7 +1625,7 @@ onBeforeUnmount(() => {
   margin: 0;
   padding: 1.5rem;
   overflow-x: auto;
-  color: #d9e9df;
+  color: #d9f0f1;
   font-family: var(--fp-mono);
   font-size: clamp(0.7rem, 1vw, 0.82rem);
   line-height: 1.9;
@@ -1636,7 +1636,7 @@ onBeforeUnmount(() => {
 }
 
 .fp-code-comment {
-  color: #66857a;
+  color: #66878c;
 }
 
 .fp-code-keyword {
@@ -1657,10 +1657,10 @@ onBeforeUnmount(() => {
   position: relative;
   overflow: hidden;
   padding: clamp(2rem, 5vw, 4.5rem);
-  border: 1px solid rgba(182, 243, 107, 0.22);
+  border: 1px solid rgba(18, 201, 214, 0.22);
   border-radius: 22px;
   background:
-    radial-gradient(circle at 82% 18%, rgba(182, 243, 107, 0.13), transparent 30%),
+    radial-gradient(circle at 82% 18%, rgba(18, 201, 214, 0.13), transparent 30%),
     linear-gradient(135deg, rgba(17, 37, 31, 0.9), rgba(12, 27, 23, 0.9));
 }
 
@@ -1728,8 +1728,8 @@ onBeforeUnmount(() => {
 }
 
 @keyframes fp-pulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(182, 243, 107, 0.4); }
-  50% { box-shadow: 0 0 0 0.42rem rgba(182, 243, 107, 0); }
+  0%, 100% { box-shadow: 0 0 0 0 rgba(18, 201, 214, 0.4); }
+  50% { box-shadow: 0 0 0 0.42rem rgba(18, 201, 214, 0); }
 }
 
 @keyframes fp-scan {
@@ -1743,7 +1743,7 @@ onBeforeUnmount(() => {
   }
 
   .fp-button--primary:hover {
-    background: #c8ff7d;
+    background: #3adde6;
   }
 
   .fp-text-link:hover {
