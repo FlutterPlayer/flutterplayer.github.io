@@ -19,8 +19,8 @@ export default defineUserConfig({
   locales: {
     "/": {
       lang: "zh-CN",
-      title: "Fplayer -- Flutter plugin for video player",
-      description: "fplayer的官方文档",
+      title: "Fplayer",
+      description: "Fplayer：一套 Dart API，五端原生播放的 Flutter 媒体播放器。",
     },
     // "/en/": {
     //   lang: "en-US",

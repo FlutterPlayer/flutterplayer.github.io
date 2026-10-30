@@ -11,6 +11,7 @@ interface Platform {
   detail: string;
   icon: PlatformIcon;
   kind: DeviceKind;
+  color: string;
   headline: string;
   blurb: string;
   facts: string[];
@@ -22,12 +23,13 @@ const platforms: Platform[] = [
   {
     id: 'android',
     name: 'Android',
-    detail: 'API 28+ · arm64-v8a',
+    detail: 'API 28+ · arm64',
     icon: 'android',
     kind: 'phone',
-    headline: '把硬解和纹理渲染交给原生。',
-    blurb: '同一个 FPlayer，在 Android 上连接 fplayercore 的硬件解码器和 SurfaceTexture，UI 侧只关心状态与交互。',
-    facts: ['NDK 29 与 16 KB 页对齐', 'Texture 纹理输出', '音轨查询与切换'],
+    color: '#1E7FFF',
+    headline: 'Native decode. Texture output.',
+    blurb: 'The same FPlayer call lands on fplayercore and a SurfaceTexture. Your widget tree only sees state.',
+    facts: ['NDK 29 / 16 KB alignment', 'SurfaceTexture output', 'Audio track switching'],
     track: 'English · AAC',
     codec: '48 kHz · stereo',
   },
@@ -37,9 +39,10 @@ const platforms: Platform[] = [
     detail: 'iOS 13+ · arm64',
     icon: 'apple',
     kind: 'phone',
-    headline: '同一套 Dart，落在原生播放管线。',
-    blurb: 'iOS 侧通过 Swift Package Manager 直接取得官方 xcframework，FPlayer 的 API 与 Android 保持一致。',
-    facts: ['Device / arm64 simulator', 'VideoToolbox 硬解', 'SwiftPM binaryTarget'],
+    color: '#2CC26E',
+    headline: 'One API, on native rails.',
+    blurb: 'Swift Package Manager pulls the official xcframework. FPlayer keeps the same Dart surface as Android.',
+    facts: ['Device / arm64 simulator', 'VideoToolbox decode', 'SwiftPM binaryTarget'],
     track: 'Japanese · AAC',
     codec: '48 kHz · stereo',
   },
@@ -49,9 +52,10 @@ const platforms: Platform[] = [
     detail: 'macOS 10.15+ · arm64',
     icon: 'apple',
     kind: 'desktop',
-    headline: '桌面窗口，也能复用同一条链路。',
-    blurb: '窗口、Metal 渲染、音轨选择与移动端共享同一套 FPlayer 状态机，桌面端不需要另写播放器。',
-    facts: ['Metal / CoreVideo', '窗口与全屏适配', '同一套音轨 API'],
+    color: '#F5C842',
+    headline: 'A desktop window is still a stage.',
+    blurb: 'Window resizing, Metal output and fullscreen all reuse the FPlayer state machine and audio API.',
+    facts: ['Metal / CoreVideo', 'Window + fullscreen', 'Same audio track API'],
     track: 'English · AAC',
     codec: '48 kHz · stereo',
   },
@@ -61,33 +65,32 @@ const platforms: Platform[] = [
     detail: 'Windows x64',
     icon: 'windows',
     kind: 'desktop',
-    headline: 'Windows 原生 DLL，接口仍然只有一套。',
-    blurb: 'fplayercore 的 C API 由 CMake 接入 Flutter Windows runner，播放、暂停、seek 与音轨控制无需分叉。',
-    facts: ['CMake + fplayercore.dll', '纹理帧回传', '与 Dart API 对齐'],
+    color: '#FF4545',
+    headline: 'A native DLL. One Dart call.',
+    blurb: 'fplayercore is linked through CMake; playback, seek and track selection stay in the shared API.',
+    facts: ['CMake + fplayercore.dll', 'Texture frame handoff', 'Aligned with Dart API'],
     track: 'English · AAC',
     codec: '48 kHz · stereo',
   },
   {
     id: 'ohos',
     name: 'OpenHarmony',
-    detail: 'API 12+ · arm64-v8a',
+    detail: 'API 12+ · arm64',
     icon: 'ohos',
     kind: 'phone',
-    headline: '新平台，不是新的播放器。',
-    blurb: 'OpenHarmony 通过 NAPI + ArkTS 暴露 fplayercore，FPlayer 继续使用同一组 Dart 方法。',
-    facts: ['NAPI / ArkTS 桥接', 'OHOS HAR 分发', '音轨选择可用'],
+    color: '#2ECAAD',
+    headline: 'A new platform. Not a new player.',
+    blurb: 'NAPI and ArkTS expose fplayercore; FPlayer remains the only player object your Dart code needs.',
+    facts: ['NAPI / ArkTS bridge', 'OHOS HAR distribution', 'Audio track selection'],
     track: 'Chinese · AAC',
     codec: '48 kHz · stereo',
   },
 ];
 
 const activeId = ref<PlatformId>('android');
-const active = computed(
-  () => platforms.find((platform) => platform.id === activeId.value) ?? platforms[0],
-);
-
+const active = computed(() => platforms.find((platform) => platform.id === activeId.value) ?? platforms[0]);
+const hardwareOn = ref(true);
 const root = ref<HTMLElement>();
-const heroVisual = ref<HTMLElement>();
 const platformStage = ref<HTMLElement>();
 const reduceMotion = ref(false);
 const gsapRef = ref<any>(null);
@@ -105,42 +108,9 @@ async function selectPlatform(id: PlatformId) {
   if (reduceMotion.value || !gsapRef.value || !platformStage.value) return;
   gsapRef.value.fromTo(
     platformStage.value,
-    { opacity: 0.45, y: 14, scale: 0.985 },
-    { opacity: 1, y: 0, scale: 1, duration: 0.4, ease: 'power3.out', overwrite: true },
+    { opacity: 0.35, y: 12 },
+    { opacity: 1, y: 0, duration: 0.35, ease: 'power3.out', overwrite: true },
   );
-}
-
-function onPointerMove(event: PointerEvent) {
-  if (
-    reduceMotion.value ||
-    !gsapRef.value ||
-    !heroVisual.value ||
-    !window.matchMedia('(hover: hover) and (pointer: fine)').matches
-  ) {
-    return;
-  }
-  const bounds = heroVisual.value.getBoundingClientRect();
-  const x = (event.clientX - bounds.left) / bounds.width - 0.5;
-  const y = (event.clientY - bounds.top) / bounds.height - 0.5;
-  gsapRef.value.to(heroVisual.value, {
-    rotateX: -y * 5,
-    rotateY: x * 7,
-    duration: 0.6,
-    ease: 'power2.out',
-    overwrite: true,
-  });
-}
-
-function resetTilt() {
-  if (!reduceMotion.value && gsapRef.value && heroVisual.value) {
-    gsapRef.value.to(heroVisual.value, {
-      rotateX: 0,
-      rotateY: 0,
-      duration: 0.7,
-      ease: 'power2.out',
-      overwrite: true,
-    });
-  }
 }
 
 onMounted(async () => {
@@ -161,7 +131,7 @@ onMounted(async () => {
 
     context = gsap.context(() => {
       gsap.from('[data-hero]', {
-        y: 34,
+        y: 26,
         opacity: 0,
         duration: 0.9,
         stagger: 0.08,
@@ -170,7 +140,7 @@ onMounted(async () => {
 
       gsap.utils.toArray<HTMLElement>('[data-reveal]').forEach((element) => {
         gsap.from(element, {
-          y: 38,
+          y: 34,
           opacity: 0,
           duration: 0.8,
           ease: 'power3.out',
@@ -182,30 +152,16 @@ onMounted(async () => {
         });
       });
 
-      gsap.to('.fp-orbit-ring', {
-        rotation: 360,
-        duration: 44,
-        repeat: -1,
-        ease: 'none',
-        transformOrigin: '50% 50%',
-      });
-
-      gsap.to('.fp-glow-a', {
-        xPercent: 7,
-        yPercent: -5,
-        duration: 9,
-        repeat: -1,
-        yoyo: true,
-        ease: 'sine.inOut',
-      });
-
-      gsap.to('.fp-glow-b', {
-        xPercent: -6,
-        yPercent: 5,
-        duration: 11,
-        repeat: -1,
-        yoyo: true,
-        ease: 'sine.inOut',
+      gsap.utils.toArray<HTMLElement>('[data-shape]').forEach((shape, index) => {
+        gsap.to(shape, {
+          x: index % 2 === 0 ? 18 : -16,
+          y: index % 3 === 0 ? -22 : 18,
+          duration: 8 + index * 1.25,
+          repeat: -1,
+          yoyo: true,
+          ease: 'sine.inOut',
+          delay: index * 0.35,
+        });
       });
     }, root.value);
   } catch (error) {
@@ -223,320 +179,251 @@ onBeforeUnmount(() => {
 <template>
   <div ref="root" class="fp-home">
     <section class="fp-hero" aria-labelledby="fp-hero-title">
-      <div class="fp-hero-grid" aria-hidden="true"></div>
-      <div class="fp-glow fp-glow-a" aria-hidden="true"></div>
-      <div class="fp-glow fp-glow-b" aria-hidden="true"></div>
+      <div class="fp-shapes" aria-hidden="true">
+        <span data-shape class="fp-shape fp-shape-blue"></span>
+        <span data-shape class="fp-shape fp-shape-red"></span>
+        <span data-shape class="fp-shape fp-shape-yellow"></span>
+        <span data-shape class="fp-shape fp-shape-teal"></span>
+        <span data-shape class="fp-shape fp-shape-green"></span>
+        <span class="fp-glow fp-glow-blue"></span>
+        <span class="fp-glow fp-glow-teal"></span>
+      </div>
 
-      <div class="fp-shell fp-hero-inner">
-        <div class="fp-hero-copy">
-          <p class="fp-eyebrow" data-hero>
-            <span class="fp-pulse" aria-hidden="true"></span>
-            Flutter media engine · fplayercore 1.2.12
-          </p>
-          <h1 id="fp-hero-title" data-hero>
-            <span class="fp-title-line">一套 Dart，</span>
-            <span class="fp-title-line fp-title-accent">五端原生播放。</span>
-          </h1>
-          <p class="fp-lede" data-hero>
-            FPlayer 把播放器能力收进一组可组合的 Dart API，再交给每个平台的原生
-            fplayercore。跨端复用的是接口，不是体验。
-          </p>
-          <div class="fp-actions" data-hero>
-            <a class="fp-button fp-button--primary" href="/guide/quick">
-              开始构建
-              <svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true">
-                <path d="M4 10h11M10.5 4.5 16 10l-5.5 5.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
-              </svg>
-            </a>
-            <a class="fp-text-link" href="/basic/api">浏览播放器 API</a>
-          </div>
-          <dl class="fp-proof" data-hero>
-            <div>
-              <dt>平台</dt>
-              <dd>5</dd>
-            </div>
-            <div>
-              <dt>Dart API</dt>
-              <dd>1</dd>
-            </div>
-            <div>
-              <dt>原生内核</dt>
-              <dd>5</dd>
-            </div>
-          </dl>
+      <div class="fp-container fp-hero-inner">
+        <p class="fp-eyebrow fp-eyebrow--dark" data-hero>
+          <span class="fp-live-dot"></span>
+          <span>Cross-platform media engine</span>
+          <span class="fp-eyebrow-version">· fplayercore 1.2.12</span>
+        </p>
+        <h1 id="fp-hero-title" data-hero>
+          <span>Play once.</span>
+          <span>Everywhere.</span>
+        </h1>
+        <p class="fp-hero-sub" data-hero>
+          一套 Dart API，连接 Android、iOS、macOS、Windows 和 OpenHarmony 的原生
+          fplayercore 内核。跨端复用接口，不牺牲平台体验。
+        </p>
+        <div class="fp-actions" data-hero>
+          <a class="fp-button fp-button--blue" href="/guide/quick">开始构建 <span aria-hidden="true">→</span></a>
+          <a class="fp-button fp-button--ghost-dark" href="/basic/api">查看 API</a>
         </div>
-
-        <div
-          ref="heroVisual"
-          class="fp-hero-visual"
-          data-hero
-          @pointermove="onPointerMove"
-          @pointerleave="resetTilt"
-        >
-          <div class="fp-orbit" aria-hidden="true">
-            <div class="fp-orbit-ring fp-orbit-ring--outer"></div>
-            <div class="fp-orbit-ring fp-orbit-ring--inner"></div>
-            <div class="fp-orbit-axis"></div>
-            <div class="fp-orbit-core">
-              <PlatformGlyph name="flutter" />
-              <span>FPlayer</span>
-            </div>
-            <div class="fp-orbit-node fp-node-android">
-              <PlatformGlyph name="android" />
-              <span>Android</span>
-            </div>
-            <div class="fp-orbit-node fp-node-ios">
-              <PlatformGlyph name="apple" />
-              <span>iOS</span>
-            </div>
-            <div class="fp-orbit-node fp-node-macos">
-              <PlatformGlyph name="apple" />
-              <span>macOS</span>
-            </div>
-            <div class="fp-orbit-node fp-node-windows">
-              <PlatformGlyph name="windows" />
-              <span>Windows</span>
-            </div>
-            <div class="fp-orbit-node fp-node-ohos">
-              <PlatformGlyph name="ohos" />
-              <span>OHOS</span>
-            </div>
-          </div>
-
-          <div class="fp-signal-card">
-            <div class="fp-signal-head">
-              <span class="fp-signal-kicker">native bridge</span>
-              <span class="fp-signal-live"><i></i> ready</span>
-            </div>
-            <div class="fp-signal-row">
-              <span class="fp-signal-dot"></span>
-              <span>fplayercore</span>
-              <span class="fp-signal-version">1.2.12</span>
-            </div>
-            <code>FPlayer → MethodChannel → native</code>
-          </div>
+        <div class="fp-hero-chips" data-hero aria-label="支持的平台">
+          <span v-for="platform in platforms" :key="platform.id">
+            <i :style="{ background: platform.color }"></i>
+            {{ platform.name }}
+          </span>
         </div>
       </div>
 
-      <div class="fp-scroll-cue" aria-hidden="true">
-        <span></span>
-        scroll to explore
+      <div class="fp-hero-foot" aria-hidden="true">
+        <span>fplayer / five targets</span>
+        <span class="fp-scroll-hint">scroll to explore ↓</span>
       </div>
     </section>
 
-    <section class="fp-section fp-section--platforms" aria-labelledby="fp-platforms-title">
-      <div class="fp-shell">
+    <section class="fp-section fp-platform-section" aria-labelledby="fp-platform-title">
+      <div class="fp-container">
         <div class="fp-section-head" data-reveal>
-          <p class="fp-eyebrow">One API · five targets</p>
-          <h2 id="fp-platforms-title">跨平台，不等于同一个屏幕。</h2>
-          <p>
-            选择目标平台，看看同一组 FPlayer 调用如何落到不同的原生 surface、窗口系统和分发格式。
-          </p>
+          <p class="fp-eyebrow">One runtime · five targets</p>
+          <h2 id="fp-platform-title">A single player object.<br />Five native surfaces.</h2>
+          <p>Pick a target. The same FPlayer state, texture and audio-track calls land on that platform's native layer.</p>
         </div>
 
-        <div class="fp-platform-layout">
-          <div class="fp-platform-tabs" role="group" aria-label="选择目标平台" data-reveal>
-            <button
-              v-for="platform in platforms"
-              :key="platform.id"
-              type="button"
-              class="fp-platform-tab"
-              :class="{ 'is-active': activeId === platform.id }"
-              :aria-pressed="activeId === platform.id"
-              @click="selectPlatform(platform.id)"
-            >
-              <span class="fp-platform-icon">
-                <PlatformGlyph :name="platform.icon" />
-              </span>
-              <span>
-                <strong>{{ platform.name }}</strong>
-                <small>{{ platform.detail }}</small>
-              </span>
-              <span class="fp-platform-check" aria-hidden="true">↗</span>
-            </button>
-          </div>
-
-          <div ref="platformStage" class="fp-platform-stage" data-reveal>
-            <div class="fp-device" :class="['fp-device--' + active.kind, 'fp-device--' + active.id]" aria-hidden="true">
-              <div v-if="active.kind === 'desktop'" class="fp-device-bar">
-                <span></span><span></span><span></span>
-                <span class="fp-device-bar-title">{{ active.name }}</span>
-              </div>
-              <div v-else class="fp-device-notch"></div>
-              <div class="fp-device-screen">
-                <div class="fp-screen-meta">
-                  <span>{{ active.detail }}</span>
-                  <span>fplayercore</span>
-                </div>
-                <div class="fp-screen-video">
-                  <div class="fp-screen-orbit" aria-hidden="true"></div>
-                  <div class="fp-play" aria-hidden="true">
-                    <svg viewBox="0 0 18 18" width="18" height="18">
-                      <path d="m7 5 6 4-6 4z" fill="currentColor" />
-                    </svg>
-                  </div>
-                  <span class="fp-screen-caption">fplayer example · 1080p</span>
-                </div>
-                <div class="fp-screen-progress"><span></span></div>
-                <div class="fp-screen-tracks">
-                  <div class="fp-screen-tracks-head">
-                    <span>Audio tracks</span>
-                    <span>2 available</span>
-                  </div>
-                  <div class="fp-screen-track is-selected">
-                    <i></i>
-                    <span>{{ active.track }}</span>
-                    <small>{{ active.codec }}</small>
-                    <b>selected</b>
-                  </div>
-                  <div class="fp-screen-track">
-                    <i></i>
-                    <span>Commentary</span>
-                    <small>48 kHz · stereo</small>
-                  </div>
-                </div>
-              </div>
-              <div v-if="active.kind === 'phone'" class="fp-device-home"></div>
+        <div class="fp-flag-card" data-reveal>
+          <div class="fp-flag-copy">
+            <div class="fp-flag-top">
+              <span class="fp-live"><i></i> native bridge</span>
+              <button
+                type="button"
+                class="fp-switch"
+                :class="{ 'is-on': hardwareOn }"
+                role="switch"
+                :aria-checked="hardwareOn"
+                aria-label="切换硬件解码状态"
+                @click="hardwareOn = !hardwareOn"
+              >
+                <span class="fp-switch-knob"></span>
+              </button>
             </div>
-
-            <div class="fp-platform-copy" aria-live="polite">
-              <p class="fp-eyebrow">{{ active.name }} / {{ active.detail }}</p>
-              <h3>{{ active.headline }}</h3>
-              <p>{{ active.blurb }}</p>
-              <ul>
-                <li v-for="fact in active.facts" :key="fact">{{ fact }}</li>
-              </ul>
-              <a class="fp-text-link" href="/guide/">查看 {{ active.name }} 接入说明</a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="fp-section fp-section--capabilities" aria-labelledby="fp-capabilities-title">
-      <div class="fp-shell">
-        <div class="fp-section-head" data-reveal>
-          <p class="fp-eyebrow">What stays consistent</p>
-          <h2 id="fp-capabilities-title">体验可以不同，能力不能缩水。</h2>
-          <p>
-            播放状态、音轨、纹理渲染和发布链路都收敛到同一层，平台差异只留在它该在的地方。
-          </p>
-        </div>
-
-        <div class="fp-feature-grid">
-          <article class="fp-feature fp-feature--wide" data-reveal>
-            <div class="fp-feature-heading">
-              <span class="fp-feature-mark" aria-hidden="true">
-                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5">
-                  <path d="m12 3 8 4.5-8 4.5-8-4.5zM4 12l8 4.5 8-4.5M4 16.5l8 4.5 8-4.5" />
-                </svg>
-              </span>
-              <div>
-                <p class="fp-feature-label">fplayercore</p>
-                <h3>一个内核，五种原生表面</h3>
-              </div>
-            </div>
+            <h3>Hardware decode is {{ hardwareOn ? 'on' : 'off' }}.</h3>
             <p>
-              Android 的 SurfaceTexture、Apple 的 CVPixelBuffer、Windows 的纹理帧回传和
-              OpenHarmony 的 NAPI surface，最终都接到同一个 <code>FView</code>。
+              {{ hardwareOn
+                ? 'The native fplayercore path is active. This is the state FPlayer ships with on every supported platform.'
+                : 'The preview shows a software-only fallback. Switch it back to see the native bridge take over.' }}
             </p>
-            <div class="fp-pipeline" aria-label="跨平台调用链">
+
+            <div class="fp-platform-list" role="group" aria-label="选择平台">
+              <button
+                v-for="platform in platforms"
+                :key="platform.id"
+                type="button"
+                class="fp-platform-option"
+                :class="{ 'is-active': activeId === platform.id }"
+                :aria-pressed="activeId === platform.id"
+                @click="selectPlatform(platform.id)"
+              >
+                <i class="fp-platform-dot" :style="{ background: platform.color }"></i>
+                <span class="fp-platform-glyph"><PlatformGlyph :name="platform.icon" /></span>
+                <span class="fp-platform-name">
+                  <strong>{{ platform.name }}</strong>
+                  <small>{{ platform.detail }}</small>
+                </span>
+                <span class="fp-check" aria-hidden="true">
+                  <svg viewBox="0 0 16 16" width="14" height="14">
+                    <path d="m3.5 8.3 2.8 2.8 6.2-6.2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+                  </svg>
+                </span>
+              </button>
+            </div>
+
+            <div class="fp-chip-row" aria-label="调用链">
               <span>Dart FPlayer</span>
-              <i></i>
+              <b>→</b>
               <span>MethodChannel / NAPI</span>
-              <i></i>
+              <b>→</b>
               <span>fplayercore</span>
-              <i></i>
-              <span>native surface</span>
             </div>
-          </article>
+          </div>
 
-          <article class="fp-feature" data-reveal>
-            <div class="fp-feature-heading">
-              <span class="fp-feature-mark" aria-hidden="true">
-                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5">
-                  <path d="M4 14v-4M8 18V6M12 15V9M16 20V4M20 12V8" stroke-linecap="round" />
-                </svg>
-              </span>
-              <div>
-                <p class="fp-feature-label">Audio tracks</p>
-                <h3>音轨可见，也能切换。</h3>
+          <div ref="platformStage" class="fp-preview-wrap">
+            <div
+              class="fp-preview"
+              :class="['fp-preview--' + active.kind, { 'is-software': !hardwareOn }]"
+              :style="{ '--platform-color': active.color }"
+            >
+              <div class="fp-preview-bar">
+                <span></span><span></span><span></span>
+                <small>{{ active.name }}</small>
+              </div>
+              <div class="fp-preview-screen">
+                <div class="fp-preview-meta">
+                  <span>{{ active.detail }}</span>
+                  <span class="fp-preview-status"><i></i>{{ hardwareOn ? 'native' : 'software' }}</span>
+                </div>
+                <div class="fp-preview-video">
+                  <span class="fp-preview-ring"></span>
+                  <span class="fp-preview-play">▶</span>
+                  <span class="fp-preview-label">fplayer example · 1080p</span>
+                </div>
+                <div class="fp-preview-progress"><i></i></div>
+                <div class="fp-preview-tracks">
+                  <div class="fp-preview-track-head"><span>Audio tracks</span><span>02</span></div>
+                  <div class="fp-preview-track is-selected">
+                    <i></i><span>{{ active.track }}</span><small>{{ active.codec }}</small>
+                  </div>
+                  <div class="fp-preview-track">
+                    <i></i><span>Commentary</span><small>48 kHz · stereo</small>
+                  </div>
+                </div>
               </div>
             </div>
-            <p>读取语言、编码和采样率，选中任意一条音轨，不需要碰平台原生代码。</p>
-            <div class="fp-track-preview">
-              <div><i></i><span>English · AAC</span><b>selected</b></div>
-              <div><i></i><span>Commentary</span><b></b></div>
+            <div class="fp-preview-caption">
+              <span>{{ active.headline }}</span>
+              <span>{{ hardwareOn ? 'hardware path' : 'fallback' }}</span>
             </div>
-          </article>
+          </div>
+        </div>
+      </div>
+    </section>
 
-          <article class="fp-feature" data-reveal>
-            <div class="fp-feature-heading">
-              <span class="fp-feature-mark" aria-hidden="true">
-                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5">
-                  <rect x="3" y="5" width="18" height="14" rx="2" />
-                  <path d="M8 5V3M16 5V3M8 19v2M16 19v2" stroke-linecap="round" />
-                </svg>
-              </span>
-              <div>
-                <p class="fp-feature-label">Adaptive surface</p>
-                <h3>同一帧，适配每块屏幕。</h3>
-              </div>
-            </div>
-            <p>手机、桌面窗口和全屏切换共享状态机，旋转、尺寸变化与纹理重建由 FView 处理。</p>
-          </article>
+    <section class="fp-section fp-bento-section" aria-labelledby="fp-bento-title">
+      <div class="fp-container">
+        <div class="fp-section-head" data-reveal>
+          <p class="fp-eyebrow">What stays constant</p>
+          <h2 id="fp-bento-title">The API is shared.<br />The details are not.</h2>
+          <p>Platform teams get their own surfaces and packages. Product teams get one player model.</p>
+        </div>
 
-          <article class="fp-feature" data-reveal>
-            <div class="fp-feature-heading">
-              <span class="fp-feature-mark" aria-hidden="true">
-                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5">
-                  <path d="m4 7 8-4 8 4v10l-8 4-8-4zM4 7l8 4 8-4M12 11v10" />
-                </svg>
-              </span>
-              <div>
-                <p class="fp-feature-label">Distribution</p>
-                <h3>每个平台，走它自己的官方包。</h3>
-              </div>
-            </div>
-            <p>
-              Maven Central 的 AAR、Apple 的 SwiftPM binaryTarget、Windows DLL 与 OHOS
-              HAR，全部由 ijkplayer 的同一版 Release 产出。
+        <div class="fp-bento">
+          <article class="fp-bento-card fp-bento-intro" data-reveal>
+            <p class="fp-card-eyebrow">One object</p>
+            <h3>Same FPlayer.<br />Five native cores.</h3>
+            <p class="fp-card-copy">
+              Create once, then move from a phone to a desktop window without rewriting the playback state machine.
             </p>
+            <div class="fp-chip-grid">
+              <span v-for="platform in platforms" :key="platform.id">
+                <i :style="{ background: platform.color }"></i>{{ platform.name }}
+              </span>
+            </div>
+          </article>
+
+          <article class="fp-bento-card fp-bento-audio" data-reveal>
+            <p class="fp-card-eyebrow">Audio tracks</p>
+            <h3>Language is a switch, not a rebuild.</h3>
+            <div class="fp-track-widget">
+              <div class="fp-track-widget-bar"><span></span><span></span><span></span></div>
+              <div class="fp-track-widget-row is-selected">
+                <i></i><span>English · AAC</span><b>on</b>
+              </div>
+              <div class="fp-track-widget-row">
+                <i></i><span>Commentary</span><b></b>
+              </div>
+              <div class="fp-track-widget-row">
+                <i></i><span>Japanese · AAC</span><b></b>
+              </div>
+            </div>
+            <p class="fp-card-copy">Read language, codec and sample rate. Select a stream by index.</p>
+          </article>
+
+          <article class="fp-bento-card fp-bento-surface" data-reveal>
+            <p class="fp-card-eyebrow">Adaptive surface</p>
+            <h3>One frame, every screen.</h3>
+            <div class="fp-surface-widget" aria-hidden="true">
+              <span class="fp-surface-phone"></span>
+              <span class="fp-surface-window"></span>
+              <span class="fp-surface-wide"></span>
+            </div>
+            <p class="fp-card-copy">Rotation, resize and fullscreen are handled by FView and the native texture.</p>
+          </article>
+
+          <article class="fp-bento-card fp-bento-distribution" data-reveal>
+            <div>
+              <p class="fp-card-eyebrow">Distribution</p>
+              <h3>Each platform gets its own official package.</h3>
+              <p class="fp-card-copy">
+                Maven Central AAR, SwiftPM binaryTarget, Windows DLL and OpenHarmony HAR all come from the same ijkplayer release.
+              </p>
+            </div>
+            <div class="fp-package-stack">
+              <span><b>Maven</b><small>Android AAR</small></span>
+              <span><b>SPM</b><small>Apple binaryTarget</small></span>
+              <span><b>DLL</b><small>Windows x64</small></span>
+              <span><b>HAR</b><small>OpenHarmony</small></span>
+            </div>
           </article>
         </div>
       </div>
     </section>
 
-    <section class="fp-section fp-section--code" aria-labelledby="fp-code-title">
-      <div class="fp-shell fp-code-layout">
+    <section class="fp-code-section" aria-labelledby="fp-code-title">
+      <div class="fp-container fp-code-layout">
         <div class="fp-code-copy" data-reveal>
-          <p class="fp-eyebrow">From first frame to first switch</p>
-          <h2 id="fp-code-title">播放器代码，应该只写一遍。</h2>
-          <p>
-            初始化、准备、读取音轨、切换音轨。平台、文件格式和解码器选择留在 fplayercore，
-            业务侧只面对 FPlayer。
-          </p>
+          <p class="fp-eyebrow fp-eyebrow--blue">From first frame to first switch</p>
+          <h2 id="fp-code-title">One API.<br /><em>No forks.</em></h2>
+          <p>Initialize, prepare, inspect tracks, choose one. The platform never leaks into the Dart call site.</p>
           <ol class="fp-steps">
-            <li><span>01</span><div><strong>创建播放器</strong><p>由 FPlayer 管理原生实例和纹理生命周期。</p></div></li>
-            <li><span>02</span><div><strong>等待 prepare</strong><p>拿到媒体元数据后，音轨和时长才可用。</p></div></li>
-            <li><span>03</span><div><strong>读取并切换音轨</strong><p>用同一个索引 API 跨五端选择音轨。</p></div></li>
+            <li><span>01</span><p>Create the player and set a source.</p></li>
+            <li><span>02</span><p>Prepare once and read the media metadata.</p></li>
+            <li><span>03</span><p>Select any audio track by stream index.</p></li>
           </ol>
+          <a class="fp-text-link fp-text-link--dark" href="/basic/api">Open the full API →</a>
         </div>
 
-        <div class="fp-code-panel" data-reveal>
+        <div class="fp-code-card" data-reveal>
           <div class="fp-code-bar">
-            <span><i></i><i></i><i></i></span>
+            <span class="fp-code-dots"><i></i><i></i><i></i></span>
             <span>video_page.dart</span>
             <span>Dart</span>
           </div>
-          <pre><code><span class="fp-code-comment">// one player, every target</span>
-<span class="fp-code-keyword">final</span> player = FPlayer();
+          <pre><code><span class="fp-c-comment">// one player, every target</span>
+<span class="fp-c-keyword">final</span> player = FPlayer();
 
-<span class="fp-code-keyword">await</span> player.setDataSource(url);
-<span class="fp-code-keyword">await</span> player.prepareAsync();
+<span class="fp-c-keyword">await</span> player.setDataSource(url);
+<span class="fp-c-keyword">await</span> player.prepareAsync();
 
-<span class="fp-code-keyword">final</span> tracks = <span class="fp-code-keyword">await</span> player.getAudioTracks();
-<span class="fp-code-keyword">await</span> player.setAudioTrack(tracks.first);</code></pre>
+<span class="fp-c-keyword">final</span> tracks = <span class="fp-c-keyword">await</span> player.getAudioTracks();
+<span class="fp-c-keyword">await</span> player.setAudioTrack(tracks.first);</code></pre>
           <div class="fp-code-foot">
             <span>Android · iOS · macOS · Windows · OpenHarmony</span>
             <span>fplayercore 1.2.12</span>
@@ -545,21 +432,24 @@ onBeforeUnmount(() => {
       </div>
     </section>
 
-    <section class="fp-cta" aria-labelledby="fp-cta-title">
-      <div class="fp-shell fp-cta-inner" data-reveal>
+    <section class="fp-cta-section" aria-labelledby="fp-cta-title">
+      <div class="fp-cta-shapes" aria-hidden="true">
+        <span data-shape class="fp-shape fp-shape-blue fp-shape--small"></span>
+        <span data-shape class="fp-shape fp-shape-red fp-shape--small"></span>
+        <span data-shape class="fp-shape fp-shape-yellow fp-shape--small"></span>
+        <span data-shape class="fp-shape fp-shape-teal fp-shape--small"></span>
+      </div>
+      <div class="fp-container fp-cta" data-reveal>
         <p class="fp-eyebrow">Build for every screen</p>
-        <h2 id="fp-cta-title">把同一套播放器，放进每一个屏幕。</h2>
-        <p>从 Flutter 项目开始，选择你的目标平台，剩下的交给 FPlayer 和 fplayercore。</p>
-        <a class="fp-button fp-button--primary" href="/guide/quick">
-          进入快速上手
-          <svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true">
-            <path d="M4 10h11M10.5 4.5 16 10l-5.5 5.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
-          </svg>
-        </a>
-        <div class="fp-cta-platforms" aria-hidden="true">
+        <h2 id="fp-cta-title">Ship it <em>everywhere.</em></h2>
+        <p>Start with one Flutter app. Add a platform when you need it. FPlayer and fplayercore keep the contract.</p>
+        <div class="fp-actions">
+          <a class="fp-button fp-button--dark" href="/guide/quick">进入快速上手 <span aria-hidden="true">→</span></a>
+          <a class="fp-button fp-button--ghost" href="/basic/api">查看播放器 API</a>
+        </div>
+        <div class="fp-cta-platforms">
           <span v-for="platform in platforms" :key="platform.id">
-            <PlatformGlyph :name="platform.icon" />
-            {{ platform.name }}
+            <i :style="{ background: platform.color }"></i>{{ platform.name }}
           </span>
         </div>
       </div>
@@ -569,52 +459,47 @@ onBeforeUnmount(() => {
 
 <style scoped>
 .fp-home {
-  --fp-bg: #f4fbfc;
-  --fp-surface: #ffffff;
-  --fp-surface-raised: #e8f7f8;
-  --fp-ink: #082126;
-  --fp-muted: #547177;
-  --fp-line: rgba(8, 33, 38, 0.14);
-  --fp-accent: #12c9d6;
-  --fp-mint: #087e89;
-  --fp-cyan: #087e89;
-  --fp-amber: #0b8f9a;
-  --fp-grid-line: rgba(8, 33, 38, 0.075);
-  --fp-hover-surface: rgba(18, 201, 214, 0.08);
-  --fp-glass: rgba(255, 255, 255, 0.8);
-  --fp-glass-strong: rgba(255, 255, 255, 0.94);
-  --fp-glass-shadow: rgba(8, 33, 38, 0.12);
-  --fp-cta-border: rgba(18, 201, 214, 0.3);
-  --fp-cta-bg: linear-gradient(135deg, rgba(231, 249, 250, 0.96), rgba(213, 244, 246, 0.96));
-  --fp-display: 'Space Grotesk Variable', 'Space Grotesk', 'Avenir Next', 'PingFang SC', sans-serif;
-  --fp-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  --fp-blue: #1e7fff;
+  --fp-yellow: #f5c842;
+  --fp-red: #ff4545;
+  --fp-teal: #2ecaad;
+  --fp-green: #2cc26e;
+  --fp-surface: #0d0d0f;
+  --fp-surface-2: #141417;
+  --fp-page: #fafafa;
+  --fp-card: #ffffff;
+  --fp-ink: #1a1a1a;
+  --fp-muted: #666666;
+  --fp-faint: #888888;
+  --fp-border: rgba(0, 0, 0, 0.08);
+  --fp-border-strong: rgba(0, 0, 0, 0.15);
+  --fp-serif: 'Instrument Serif', Georgia, serif;
+  --fp-sans: 'Geist Variable', 'Geist', system-ui, sans-serif;
+  --fp-mono: 'Geist Mono Variable', 'Geist Mono', 'Fira Code', monospace;
   position: relative;
   isolation: isolate;
   overflow: hidden;
   color: var(--fp-ink);
-  background: var(--fp-bg);
-  font-family: var(--fp-display);
+  background: var(--fp-page);
+  font-family: var(--fp-sans);
+  font-size: 18px;
+  line-height: 1.6;
   text-align: left;
 }
 
 html[data-theme='dark'] .fp-home {
-  --fp-bg: #061012;
-  --fp-surface: #0b1a1d;
-  --fp-surface-raised: #102528;
-  --fp-ink: #effafb;
-  --fp-muted: #9bb4b7;
-  --fp-line: rgba(214, 244, 246, 0.14);
-  --fp-accent: #12c9d6;
-  --fp-mint: #12c9d6;
-  --fp-cyan: #6fe4eb;
-  --fp-amber: #36dbe6;
-  --fp-grid-line: rgba(214, 244, 246, 0.055);
-  --fp-hover-surface: rgba(18, 201, 214, 0.08);
-  --fp-glass: rgba(12, 27, 23, 0.78);
-  --fp-glass-strong: rgba(12, 27, 23, 0.9);
-  --fp-glass-shadow: rgba(0, 0, 0, 0.24);
-  --fp-cta-border: rgba(18, 201, 214, 0.22);
-  --fp-cta-bg: linear-gradient(135deg, rgba(17, 37, 31, 0.9), rgba(12, 27, 23, 0.9));
+  --fp-page: #0d0d0f;
+  --fp-card: #141417;
+  --fp-ink: #ffffff;
+  --fp-muted: rgba(255, 255, 255, 0.65);
+  --fp-faint: rgba(255, 255, 255, 0.45);
+  --fp-border: rgba(255, 255, 255, 0.07);
+  --fp-border-strong: rgba(255, 255, 255, 0.16);
+}
+
+html[data-theme='dark'] .fp-home .fp-button--dark {
+  color: #1a1a1a;
+  background: #ffffff;
 }
 
 .fp-home *,
@@ -624,121 +509,189 @@ html[data-theme='dark'] .fp-home {
 }
 
 .fp-home a {
+  color: inherit;
   text-decoration: none;
 }
 
-.fp-shell {
-  width: min(1180px, calc(100% - 48px));
+.fp-container {
+  width: min(1200px, calc(100% - 80px));
   margin: 0 auto;
 }
 
 .fp-hero {
   position: relative;
-  min-height: min(900px, 100svh);
-  padding: clamp(7.5rem, 14vh, 10.5rem) 0 4rem;
-  background:
-    radial-gradient(ellipse 65% 55% at 76% 38%, rgba(18, 201, 214, 0.11), transparent 70%),
-    radial-gradient(ellipse 50% 40% at 20% 10%, rgba(18, 201, 214, 0.08), transparent 72%),
-    var(--fp-bg);
+  display: grid;
+  min-height: 100svh;
+  place-items: center;
+  overflow: hidden;
+  padding: 9rem 0 5rem;
+  color: #ffffff;
+  background: var(--fp-surface);
 }
 
-.fp-hero-grid {
+.fp-shapes,
+.fp-cta-shapes {
   position: absolute;
   inset: 0;
-  background-image:
-    linear-gradient(var(--fp-grid-line) 1px, transparent 1px),
-    linear-gradient(90deg, var(--fp-grid-line) 1px, transparent 1px);
-  background-size: 72px 72px;
-  mask-image: radial-gradient(ellipse 75% 65% at 50% 36%, #000 12%, transparent 78%);
   pointer-events: none;
+}
+
+.fp-shape {
+  position: absolute;
+  display: block;
+  will-change: transform;
+}
+
+.fp-shape-blue {
+  top: 11%;
+  left: -7%;
+  width: clamp(16rem, 34vw, 32rem);
+  height: clamp(13rem, 27vw, 25rem);
+  border-radius: 38% 62% 47% 53% / 48% 42% 58% 52%;
+  background: var(--fp-blue);
+  opacity: 0.94;
+}
+
+.fp-shape-red {
+  top: 17%;
+  right: 8%;
+  width: clamp(5rem, 11vw, 10rem);
+  height: clamp(5rem, 11vw, 10rem);
+  border-radius: 50%;
+  background: var(--fp-red);
+}
+
+.fp-shape-yellow {
+  right: -6%;
+  bottom: 11%;
+  width: clamp(10rem, 22vw, 20rem);
+  height: clamp(7rem, 15vw, 14rem);
+  border-radius: 32px;
+  background: var(--fp-yellow);
+  transform: rotate(18deg);
+}
+
+.fp-shape-teal {
+  bottom: -8%;
+  left: 16%;
+  width: clamp(4rem, 8vw, 7rem);
+  height: clamp(11rem, 21vw, 19rem);
+  border-radius: 999px;
+  background: var(--fp-teal);
+  transform: rotate(-24deg);
+}
+
+.fp-shape-green {
+  top: 44%;
+  left: 7%;
+  width: 1rem;
+  height: 1rem;
+  border-radius: 50%;
+  background: var(--fp-green);
 }
 
 .fp-glow {
   position: absolute;
-  width: 34rem;
-  height: 34rem;
+  width: 32rem;
+  height: 32rem;
   border-radius: 50%;
-  filter: blur(90px);
-  opacity: 0.38;
-  pointer-events: none;
-  will-change: transform;
+  filter: blur(105px);
+  opacity: 0.24;
 }
 
-.fp-glow-a {
-  top: 10%;
-  right: 6%;
-  background: rgba(18, 201, 214, 0.16);
+.fp-glow-blue {
+  top: 24%;
+  left: 24%;
+  background: var(--fp-blue);
 }
 
-.fp-glow-b {
-  bottom: -12%;
-  left: 12%;
-  background: rgba(18, 201, 214, 0.12);
+.fp-glow-teal {
+  right: 8%;
+  bottom: 4%;
+  background: var(--fp-teal);
 }
 
 .fp-hero-inner {
   position: relative;
   z-index: 1;
-  display: grid;
-  grid-template-columns: minmax(0, 1.04fr) minmax(420px, 0.96fr);
+  display: flex;
+  max-width: 960px;
+  flex-direction: column;
   align-items: center;
-  gap: clamp(2rem, 5vw, 5rem);
+  text-align: center;
 }
 
 .fp-eyebrow {
   display: flex;
   align-items: center;
-  gap: 0.65rem;
-  margin: 0 0 1.4rem;
-  color: var(--fp-muted);
-  font-family: var(--fp-mono);
-  font-size: 0.72rem;
-  letter-spacing: 0.025em;
-  line-height: 1.4;
+  gap: 0.55rem;
+  margin: 0 0 1.5rem;
+  color: var(--fp-blue);
+  font-family: var(--fp-sans);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  line-height: 1.6;
+  text-transform: uppercase;
 }
 
-.fp-pulse {
-  width: 0.48rem;
-  height: 0.48rem;
-  border-radius: 50%;
-  background: var(--fp-accent);
-  box-shadow: 0 0 0 0 rgba(18, 201, 214, 0.45);
-  animation: fp-pulse 2.4s ease-out infinite;
+.fp-eyebrow--dark {
+  flex-wrap: wrap;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.62);
 }
 
-.fp-hero h1 {
-  max-width: 100%;
-  margin: 0;
-  color: var(--fp-ink);
-  font-size: clamp(2.8rem, 5.25vw, 5.4rem);
-  font-weight: 500;
-  letter-spacing: -0.07em;
-  line-height: 0.98;
-}
-
-.fp-title-line {
-  display: block;
+.fp-eyebrow-version {
   white-space: nowrap;
 }
 
-.fp-title-accent {
-  color: var(--fp-mint);
+.fp-eyebrow--blue {
+  color: var(--fp-blue);
 }
 
-.fp-lede {
-  max-width: 34rem;
+.fp-live-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--fp-green);
+  box-shadow: 0 0 0 0 rgba(44, 194, 110, 0.42);
+  animation: fp-pulse 2s ease infinite;
+}
+
+.fp-hero h1 {
+  max-width: 1000px;
+  margin: 0;
+  color: #ffffff;
+  font-family: var(--fp-serif);
+  font-size: clamp(5.5rem, 12vw, 10rem);
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.03em;
+  line-height: 0.82;
+}
+
+.fp-hero h1 span {
+  display: block;
+}
+
+.fp-hero h1 span:last-child {
+  color: var(--fp-blue);
+}
+
+.fp-hero-sub {
+  max-width: 660px;
   margin: 2rem 0 0;
-  color: var(--fp-muted);
-  font-size: clamp(1rem, 1.25vw, 1.14rem);
-  line-height: 1.75;
+  color: rgba(255, 255, 255, 0.68);
+  font-size: clamp(1rem, 1.5vw, 1.18rem);
+  line-height: 1.65;
 }
 
 .fp-actions {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
-  gap: 1.2rem;
-  margin-top: 2.1rem;
+  justify-content: center;
+  gap: 0.7rem;
+  margin-top: 2rem;
 }
 
 .fp-button {
@@ -746,882 +699,804 @@ html[data-theme='dark'] .fp-home {
   min-height: 48px;
   align-items: center;
   justify-content: center;
-  gap: 0.65rem;
-  padding: 0.7rem 1.1rem;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
   border: 1px solid transparent;
-  border-radius: 9px;
-  font-size: 0.92rem;
+  border-radius: 8px;
+  font-family: var(--fp-sans);
+  font-size: 0.95rem;
   font-weight: 600;
   line-height: 1;
-  transition: transform 160ms ease, background-color 160ms ease, border-color 160ms ease;
+  transition: transform 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
 }
 
-.fp-button--primary {
-  color: #041416;
-  background: var(--fp-accent);
+.fp-home .fp-button--blue {
+  color: #ffffff;
+  background: var(--fp-blue);
 }
 
-.fp-text-link {
+.fp-home .fp-button--dark {
+  color: #ffffff;
+  background: var(--fp-surface);
+}
+
+.fp-home .fp-button--ghost-dark {
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.25);
+  background: transparent;
+}
+
+.fp-home .fp-button--ghost {
   color: var(--fp-ink);
-  font-size: 0.9rem;
-  font-weight: 500;
-  text-decoration: underline;
-  text-decoration-color: rgba(239, 250, 251, 0.35);
-  text-underline-offset: 0.3em;
-  transition: color 160ms ease, text-decoration-color 160ms ease;
+  border-color: var(--fp-border-strong);
+  background: transparent;
 }
 
-.fp-proof {
+.fp-hero-chips,
+.fp-cta-platforms {
   display: flex;
-  gap: clamp(1.6rem, 4vw, 3.8rem);
-  margin: 3rem 0 0;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.45rem;
 }
 
-.fp-proof div {
+.fp-hero-chips {
+  margin-top: 2.8rem;
+}
+
+.fp-hero-chips span,
+.fp-cta-platforms span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.45rem 0.65rem;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 6px;
+  color: rgba(255, 255, 255, 0.7);
+  font-family: var(--fp-mono);
+  font-size: 0.72rem;
+  line-height: 1;
+}
+
+.fp-hero-chips i,
+.fp-cta-platforms i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+
+.fp-hero-foot {
+  position: absolute;
+  right: 0;
+  bottom: 1.5rem;
+  left: 0;
+  z-index: 1;
   display: flex;
-  flex-direction: column-reverse;
-  gap: 0.3rem;
-}
-
-.fp-proof dt {
-  color: var(--fp-muted);
+  justify-content: space-between;
+  width: min(1200px, calc(100% - 80px));
+  margin: 0 auto;
+  color: rgba(255, 255, 255, 0.36);
   font-family: var(--fp-mono);
   font-size: 0.68rem;
 }
 
-.fp-proof dd {
-  margin: 0;
-  color: var(--fp-ink);
-  font-size: 1.8rem;
-  font-weight: 500;
-  letter-spacing: -0.05em;
-  line-height: 1;
-}
-
-.fp-hero-visual {
-  position: relative;
-  min-height: 0;
-  perspective: 1000px;
-  transform-style: preserve-3d;
-}
-
-.fp-orbit {
-  position: relative;
-  width: min(100%, 510px);
-  aspect-ratio: 1;
-  margin: 0 auto;
-  transform-style: preserve-3d;
-}
-
-.fp-orbit-ring {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  border: 1px solid var(--fp-line);
-  border-radius: 50%;
-  transform: translate(-50%, -50%);
-}
-
-.fp-orbit-ring--outer {
-  width: 88%;
-  height: 88%;
-  border-style: dashed;
-  opacity: 0.8;
-}
-
-.fp-orbit-ring--inner {
-  width: 55%;
-  height: 55%;
-  border-color: rgba(18, 201, 214, 0.24);
-}
-
-.fp-orbit-axis {
-  position: absolute;
-  inset: 8%;
-  border-radius: 50%;
-  background:
-    linear-gradient(90deg, transparent 49.8%, var(--fp-grid-line) 50%, transparent 50.2%),
-    linear-gradient(transparent 49.8%, var(--fp-grid-line) 50%, transparent 50.2%);
-  pointer-events: none;
-}
-
-.fp-orbit-core {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  display: grid;
-  width: 7.2rem;
-  height: 7.2rem;
-  place-items: center;
-  gap: 0.2rem;
-  border: 1px solid rgba(18, 201, 214, 0.36);
-  border-radius: 50%;
-  color: var(--fp-mint);
-  background: var(--fp-glass-strong);
-  box-shadow: 0 0 60px rgba(18, 201, 214, 0.12);
-  transform: translate(-50%, -50%);
-}
-
-.fp-orbit-core .platform-glyph {
-  width: 2rem;
-  height: 2rem;
-}
-
-.fp-orbit-core span {
-  color: var(--fp-ink);
-  font-family: var(--fp-mono);
-  font-size: 0.62rem;
-}
-
-.fp-orbit-node {
-  position: absolute;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.45rem;
-  padding: 0.55rem 0.7rem;
-  border: 1px solid var(--fp-line);
-  border-radius: 999px;
-  color: var(--fp-ink);
-  background: var(--fp-glass);
-  box-shadow: 0 10px 30px var(--fp-glass-shadow);
-  font-family: var(--fp-mono);
-  font-size: 0.64rem;
-  white-space: nowrap;
-}
-
-.fp-orbit-node .platform-glyph {
-  width: 0.95rem;
-  height: 0.95rem;
-  color: var(--fp-mint);
-}
-
-.fp-node-android {
-  top: 6%;
-  left: 35%;
-}
-
-.fp-node-ios {
-  top: 31%;
-  right: -2%;
-}
-
-.fp-node-macos {
-  bottom: 19%;
-  right: 2%;
-}
-
-.fp-node-windows {
-  bottom: 3%;
-  left: 31%;
-}
-
-.fp-node-ohos {
-  top: 38%;
-  left: -3%;
-}
-
-.fp-signal-card {
-  position: relative;
-  width: min(100%, 19rem);
-  margin: 1.1rem auto 0;
-  padding: 0.9rem 1rem;
-  border: 1px solid var(--fp-line);
-  border-radius: 14px;
-  background: var(--fp-glass);
-  box-shadow: 0 18px 45px var(--fp-glass-shadow);
-  backdrop-filter: blur(14px);
-}
-
-.fp-signal-head,
-.fp-signal-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.6rem;
-}
-
-.fp-signal-head {
-  margin-bottom: 0.7rem;
-}
-
-.fp-signal-kicker,
-.fp-signal-version,
-.fp-signal-card code {
-  color: var(--fp-muted);
-  font-family: var(--fp-mono);
-  font-size: 0.64rem;
-}
-
-.fp-signal-live {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.3rem;
-  color: var(--fp-mint);
-  font-family: var(--fp-mono);
-  font-size: 0.62rem;
-}
-
-.fp-signal-live i,
-.fp-signal-dot {
-  display: inline-block;
-  width: 0.38rem;
-  height: 0.38rem;
-  border-radius: 50%;
-  background: var(--fp-mint);
-}
-
-.fp-signal-row {
-  padding-bottom: 0.7rem;
-  border-bottom: 1px solid var(--fp-line);
-  color: var(--fp-ink);
-  font-size: 0.8rem;
-}
-
-.fp-signal-row .fp-signal-dot {
-  margin-right: -0.2rem;
-}
-
-.fp-signal-version {
-  margin-left: auto;
-}
-
-.fp-signal-card code {
-  display: block;
-  margin-top: 0.7rem;
-  color: var(--fp-cyan);
-  font-size: 0.62rem;
-}
-
-.fp-scroll-cue {
-  display: flex;
-  align-items: center;
-  gap: 0.7rem;
-  width: min(1180px, calc(100% - 48px));
-  margin: 2.4rem auto 0;
-  color: var(--fp-muted);
-  font-family: var(--fp-mono);
-  font-size: 0.64rem;
-}
-
-.fp-scroll-cue span {
-  width: 2.4rem;
-  height: 1px;
-  background: var(--fp-line);
+.fp-scroll-hint {
+  color: rgba(255, 255, 255, 0.52);
 }
 
 .fp-section {
-  position: relative;
-  padding: clamp(5rem, 10vw, 8.5rem) 0;
-  border-top: 1px solid var(--fp-line);
+  padding: 120px 0;
 }
 
 .fp-section-head {
-  max-width: 48rem;
-  margin-bottom: clamp(2.6rem, 5vw, 4.5rem);
+  max-width: 760px;
+  margin-bottom: 3.5rem;
 }
 
-.fp-section-head .fp-eyebrow {
-  margin-bottom: 1.1rem;
-}
-
-.fp-section h2 {
-  max-width: 15ch;
+.fp-section-head h2,
+.fp-code-copy h2,
+.fp-cta h2 {
   margin: 0;
   color: var(--fp-ink);
-  font-size: clamp(2.35rem, 4.4vw, 4.25rem);
-  font-weight: 500;
-  letter-spacing: -0.065em;
-  line-height: 1.02;
+  font-family: var(--fp-sans);
+  font-size: clamp(2.25rem, 5vw, 3.75rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
 }
 
-.fp-section-head > p:last-child {
-  max-width: 37rem;
-  margin: 1.5rem 0 0;
+.fp-section-head > p:last-child,
+.fp-code-copy > p:not(.fp-eyebrow),
+.fp-cta > p:not(.fp-eyebrow) {
+  max-width: 580px;
+  margin: 1.25rem 0 0;
   color: var(--fp-muted);
-  font-size: 1rem;
-  line-height: 1.75;
+  font-size: 1.04rem;
+  line-height: 1.7;
 }
 
-.fp-platform-layout {
+.fp-flag-card {
   display: grid;
-  grid-template-columns: minmax(190px, 0.33fr) minmax(0, 1fr);
-  gap: clamp(2rem, 5vw, 5rem);
-  align-items: start;
+  grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+  gap: clamp(2.5rem, 6vw, 6rem);
+  padding: clamp(1.5rem, 4vw, 3rem);
+  border: 1px solid var(--fp-border);
+  border-radius: 16px;
+  background: var(--fp-card);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.025);
 }
 
-.fp-platform-tabs {
+.fp-flag-top {
   display: flex;
-  flex-direction: column;
-  gap: 0.55rem;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
 }
 
-.fp-platform-tab {
-  display: grid;
-  grid-template-columns: 1.8rem minmax(0, 1fr) 1rem;
+.fp-live {
+  display: inline-flex;
   align-items: center;
-  gap: 0.7rem;
-  width: 100%;
-  min-height: 64px;
-  padding: 0.7rem 0.75rem;
-  border: 1px solid transparent;
-  border-radius: 11px;
+  gap: 0.5rem;
+  color: var(--fp-green);
+  font-family: var(--fp-mono);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.fp-live i,
+.fp-preview-status i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--fp-green);
+  animation: fp-pulse 2s ease infinite;
+}
+
+.fp-switch {
+  position: relative;
+  width: 80px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: 99px;
+  background: #e0e0e0;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.fp-switch.is-on {
+  background: var(--fp-blue);
+}
+
+.fp-switch-knob {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.16);
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.fp-switch.is-on .fp-switch-knob {
+  transform: translateX(36px);
+}
+
+.fp-flag-copy h3 {
+  max-width: 480px;
+  margin: 1.6rem 0 0;
+  color: var(--fp-ink);
+  font-size: clamp(1.5rem, 2.5vw, 2.15rem);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.15;
+}
+
+.fp-flag-copy > p {
+  max-width: 460px;
+  margin: 0.85rem 0 0;
   color: var(--fp-muted);
+  font-size: 0.98rem;
+  line-height: 1.65;
+}
+
+.fp-platform-list {
+  display: grid;
+  gap: 0.35rem;
+  margin-top: 1.8rem;
+}
+
+.fp-platform-option {
+  display: flex;
+  width: 100%;
+  min-height: 56px;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  color: var(--fp-ink);
   background: transparent;
-  font-family: var(--fp-display);
+  font-family: var(--fp-sans);
   text-align: left;
   cursor: pointer;
-  transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 
-.fp-platform-tab strong,
-.fp-platform-tab small {
-  display: block;
+.fp-platform-option.is-active {
+  border-color: var(--fp-border);
+  background: color-mix(in srgb, var(--fp-blue) 6%, var(--fp-card));
 }
 
-.fp-platform-tab strong {
-  color: var(--fp-ink);
-  font-size: 0.9rem;
-  font-weight: 500;
+.fp-platform-dot {
+  width: 7px;
+  height: 7px;
+  flex: none;
+  border-radius: 50%;
 }
 
-.fp-platform-tab small {
-  overflow: hidden;
-  margin-top: 0.2rem;
-  color: var(--fp-muted);
-  font-family: var(--fp-mono);
-  font-size: 0.6rem;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.fp-platform-icon {
+.fp-platform-glyph {
   display: grid;
-  width: 1.8rem;
-  height: 1.8rem;
+  width: 1.65rem;
+  height: 1.65rem;
   place-items: center;
-  border: 1px solid var(--fp-line);
-  border-radius: 7px;
-  color: var(--fp-mint);
+  color: var(--fp-ink);
 }
 
-.fp-platform-icon .platform-glyph {
+.fp-platform-glyph .platform-glyph {
   width: 1rem;
   height: 1rem;
 }
 
-.fp-platform-check {
-  color: var(--fp-muted);
-  font-size: 0.8rem;
-  opacity: 0;
-  transform: translate(-3px, 3px);
-  transition: opacity 160ms ease, transform 160ms ease;
+.fp-platform-name {
+  display: flex;
+  flex: 1;
+  align-items: baseline;
+  gap: 0.55rem;
+  min-width: 0;
 }
 
-.fp-platform-tab.is-active {
-  border-color: var(--fp-line);
-  background: var(--fp-surface);
+.fp-platform-name strong {
+  font-size: 0.86rem;
+  font-weight: 600;
 }
 
-.fp-platform-tab.is-active .fp-platform-check {
-  color: var(--fp-mint);
-  opacity: 1;
-  transform: translate(0, 0);
+.fp-platform-name small {
+  overflow: hidden;
+  color: var(--fp-faint);
+  font-family: var(--fp-mono);
+  font-size: 0.62rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.fp-platform-stage {
+.fp-check {
   display: grid;
-  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
-  gap: clamp(2rem, 4vw, 4rem);
-  align-items: center;
+  width: 1.2rem;
+  height: 1.2rem;
+  flex: none;
+  place-items: center;
+  border: 1px solid var(--fp-border-strong);
+  border-radius: 50%;
+  color: transparent;
 }
 
-.fp-device {
-  --fp-ink: #effafb;
-  --fp-muted: #9bb4b7;
-  --fp-line: rgba(214, 244, 246, 0.14);
-  --fp-cyan: #6fe4eb;
-  --fp-mint: #12c9d6;
-  --fp-accent: #12c9d6;
-  position: relative;
-  width: min(100%, 310px);
-  aspect-ratio: 0.62;
+.fp-platform-option.is-active .fp-check {
+  border-color: var(--fp-blue);
+  color: var(--fp-blue);
+}
+
+.fp-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem;
+  margin-top: 1.4rem;
+  color: var(--fp-faint);
+  font-family: var(--fp-mono);
+  font-size: 0.65rem;
+}
+
+.fp-chip-row span {
+  padding: 0.35rem 0.5rem;
+  border: 1px solid var(--fp-border);
+  border-radius: 4px;
+}
+
+.fp-chip-row b {
+  color: var(--fp-blue);
+  font-weight: 400;
+}
+
+.fp-preview-wrap {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  justify-content: center;
+  padding: 1rem 0;
+  background: radial-gradient(circle at 50% 45%, color-mix(in srgb, var(--platform-color) 12%, transparent), transparent 68%);
+}
+
+.fp-preview {
+  width: min(100%, 370px);
   margin: 0 auto;
   padding: 0.55rem;
-  border: 1px solid rgba(239, 250, 251, 0.22);
-  border-radius: 32px;
-  background: #081416;
-  box-shadow: 0 26px 70px rgba(0, 0, 0, 0.35), inset 0 0 0 1px rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 28px;
+  background: #0d0d0f;
+  box-shadow: 0 16px 56px rgba(0, 0, 0, 0.18);
+  transition: filter 0.4s ease, opacity 0.4s ease;
 }
 
-.fp-device--desktop {
-  width: 100%;
-  aspect-ratio: 1.42;
-  padding: 0.55rem;
-  border-radius: 16px;
+.fp-preview--desktop {
+  width: min(100%, 520px);
+  padding: 0.45rem;
+  border-radius: 12px;
 }
 
-.fp-device-notch {
-  position: absolute;
-  top: 0.7rem;
-  left: 50%;
-  z-index: 2;
-  width: 4.2rem;
-  height: 0.55rem;
-  border-radius: 0 0 0.6rem 0.6rem;
-  background: #081416;
-  transform: translateX(-50%);
+.fp-preview.is-software {
+  filter: grayscale(0.85);
+  opacity: 0.7;
 }
 
-.fp-device-bar {
+.fp-preview-bar {
   display: flex;
   align-items: center;
   gap: 0.28rem;
-  height: 1.5rem;
-  padding: 0 0.55rem;
+  height: 1.4rem;
+  padding: 0 0.5rem;
 }
 
-.fp-device-bar > span:not(.fp-device-bar-title) {
-  width: 0.38rem;
-  height: 0.38rem;
+.fp-preview-bar > span {
+  width: 0.35rem;
+  height: 0.35rem;
   border-radius: 50%;
-  background: rgba(239, 250, 251, 0.28);
+  background: rgba(255, 255, 255, 0.28);
 }
 
-.fp-device-bar-title {
-  margin-left: 0.5rem;
-  color: var(--fp-muted);
-  font-family: var(--fp-mono);
-  font-size: 0.58rem;
-}
-
-.fp-device-screen {
-  height: 100%;
-  min-height: 0;
-  overflow: hidden;
-  border-radius: 26px;
-  background: #0e2023;
-}
-
-.fp-device--desktop .fp-device-screen {
-  height: calc(100% - 1.5rem);
-  border-radius: 10px;
-}
-
-.fp-device--phone .fp-device-screen {
-  height: calc(100% - 0.2rem);
-}
-
-.fp-screen-meta {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0.7rem 0.8rem 0;
-  color: var(--fp-muted);
+.fp-preview-bar small {
+  margin-left: auto;
+  color: rgba(255, 255, 255, 0.45);
   font-family: var(--fp-mono);
   font-size: 0.55rem;
 }
 
-.fp-screen-video {
+.fp-preview-screen {
+  overflow: hidden;
+  min-height: 0;
+  border-radius: 22px;
+  background: #141417;
+}
+
+.fp-preview--desktop .fp-preview-screen {
+  border-radius: 8px;
+}
+
+.fp-preview-meta {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.7rem 0.75rem 0;
+  color: rgba(255, 255, 255, 0.42);
+  font-family: var(--fp-mono);
+  font-size: 0.55rem;
+}
+
+.fp-preview-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  color: var(--platform-color);
+}
+
+.fp-preview-status i {
+  background: var(--platform-color);
+}
+
+.fp-preview-video {
   position: relative;
   display: grid;
   place-items: center;
   aspect-ratio: 16 / 9;
   margin: 0.7rem 0.7rem 0;
   overflow: hidden;
-  border-radius: 9px;
+  border-radius: 8px;
   background:
-    radial-gradient(circle at 70% 30%, rgba(255, 211, 138, 0.24), transparent 28%),
-    linear-gradient(135deg, #16434a, #12262b 46%, #2b2130);
+    radial-gradient(circle at 72% 28%, color-mix(in srgb, var(--platform-color) 52%, transparent), transparent 26%),
+    linear-gradient(135deg, #1b3040, #111e2a 48%, #341f27);
 }
 
-.fp-screen-video::before {
+.fp-preview-ring {
   position: absolute;
-  inset: 0;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent);
-  content: '';
-  transform: translateX(-100%);
-  animation: fp-scan 4s ease-in-out infinite;
-}
-
-.fp-screen-orbit {
-  position: absolute;
-  width: 42%;
+  width: 48%;
   aspect-ratio: 1;
-  border: 1px solid rgba(239, 250, 251, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 50%;
-  transform: rotate(32deg) scaleY(0.42);
+  transform: rotate(30deg) scaleY(0.42);
 }
 
-.fp-play {
-  position: relative;
-  z-index: 1;
+.fp-preview-play {
   display: grid;
-  width: 2rem;
-  height: 2rem;
+  width: 2.2rem;
+  height: 2.2rem;
   place-items: center;
-  border: 1px solid rgba(239, 250, 251, 0.36);
+  border: 1px solid rgba(255, 255, 255, 0.32);
   border-radius: 50%;
-  color: var(--fp-ink);
-  background: rgba(6, 16, 18, 0.45);
+  color: #ffffff;
+  font-size: 0.65rem;
+  padding-left: 0.15rem;
 }
 
-.fp-screen-caption {
+.fp-preview-label {
   position: absolute;
   right: 0.55rem;
   bottom: 0.45rem;
-  color: rgba(239, 250, 251, 0.62);
+  color: rgba(255, 255, 255, 0.55);
   font-family: var(--fp-mono);
   font-size: 0.46rem;
 }
 
-.fp-screen-progress {
-  height: 0.18rem;
-  margin: 0.6rem 0.8rem 0;
+.fp-preview-progress {
+  height: 3px;
+  margin: 0.55rem 0.75rem 0;
   overflow: hidden;
-  border-radius: 999px;
-  background: rgba(239, 250, 251, 0.12);
+  border-radius: 99px;
+  background: rgba(255, 255, 255, 0.13);
 }
 
-.fp-screen-progress span {
+.fp-preview-progress i {
   display: block;
   width: 42%;
   height: 100%;
   border-radius: inherit;
-  background: var(--fp-mint);
+  background: var(--platform-color);
 }
 
-.fp-screen-tracks {
-  margin: 0.8rem 0.7rem;
+.fp-preview-tracks {
+  margin: 0.7rem;
   padding: 0.65rem;
-  border: 1px solid rgba(239, 250, 251, 0.08);
-  border-radius: 8px;
-  background: rgba(6, 16, 18, 0.28);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 6px;
+  background: #0d0d0f;
 }
 
-.fp-screen-tracks-head,
-.fp-screen-track {
+.fp-preview-track-head,
+.fp-preview-track {
   display: flex;
   align-items: center;
-  gap: 0.42rem;
+  gap: 0.4rem;
 }
 
-.fp-screen-tracks-head {
+.fp-preview-track-head {
   justify-content: space-between;
-  margin-bottom: 0.5rem;
-  color: var(--fp-muted);
+  margin-bottom: 0.45rem;
+  color: rgba(255, 255, 255, 0.4);
   font-family: var(--fp-mono);
   font-size: 0.48rem;
 }
 
-.fp-screen-track {
-  min-height: 1.6rem;
-  color: var(--fp-ink);
+.fp-preview-track {
+  min-height: 1.5rem;
+  color: rgba(255, 255, 255, 0.8);
+  font-family: var(--fp-mono);
   font-size: 0.56rem;
 }
 
-.fp-screen-track > i {
-  width: 0.34rem;
-  height: 0.34rem;
-  border: 1px solid rgba(239, 250, 251, 0.35);
+.fp-preview-track > i {
+  width: 0.32rem;
+  height: 0.32rem;
+  border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: 50%;
 }
 
-.fp-screen-track > small {
+.fp-preview-track > small {
   margin-left: auto;
-  color: var(--fp-muted);
-  font-family: var(--fp-mono);
+  color: rgba(255, 255, 255, 0.38);
   font-size: 0.45rem;
 }
 
-.fp-screen-track > b {
-  display: none;
-  color: var(--fp-mint);
-  font-family: var(--fp-mono);
-  font-size: 0.43rem;
-  font-weight: 400;
+.fp-preview-track.is-selected > i {
+  border-color: var(--platform-color);
+  background: var(--platform-color);
 }
 
-.fp-screen-track.is-selected > i {
-  border-color: var(--fp-mint);
-  background: var(--fp-accent);
-  box-shadow: 0 0 0 3px rgba(18, 201, 214, 0.12);
-}
-
-.fp-screen-track.is-selected > b {
-  display: inline;
-}
-
-.fp-device-home {
-  position: absolute;
-  bottom: 0.65rem;
-  left: 50%;
-  width: 2.8rem;
-  height: 0.18rem;
-  border-radius: 999px;
-  background: rgba(239, 250, 251, 0.35);
-  transform: translateX(-50%);
-}
-
-.fp-platform-copy .fp-eyebrow {
-  margin-bottom: 0.9rem;
-}
-
-.fp-platform-copy h3 {
-  max-width: 14ch;
-  margin: 0;
-  color: var(--fp-ink);
-  font-size: clamp(1.65rem, 2.7vw, 2.6rem);
-  font-weight: 500;
-  letter-spacing: -0.055em;
-  line-height: 1.07;
-}
-
-.fp-platform-copy > p:not(.fp-eyebrow) {
-  max-width: 26rem;
-  margin: 1rem 0 0;
-  color: var(--fp-muted);
-  font-size: 0.92rem;
-  line-height: 1.7;
-}
-
-.fp-platform-copy ul {
-  display: grid;
-  gap: 0.55rem;
-  margin: 1.4rem 0 1.5rem;
-  padding: 0;
-  list-style: none;
-}
-
-.fp-platform-copy li {
+.fp-preview-caption {
   display: flex;
-  align-items: baseline;
-  gap: 0.55rem;
-  color: var(--fp-ink);
-  font-size: 0.82rem;
-}
-
-.fp-platform-copy li::before {
-  width: 0.32rem;
-  height: 0.32rem;
-  flex: none;
-  border-radius: 50%;
-  background: var(--fp-mint);
-  content: '';
-}
-
-.fp-feature-grid {
-  display: grid;
-  grid-template-columns: repeat(12, minmax(0, 1fr));
-  gap: 0.9rem;
-}
-
-.fp-feature {
-  display: flex;
-  grid-column: span 4;
-  flex-direction: column;
-  min-height: 0;
-  padding: 1.35rem;
-  border: 1px solid var(--fp-line);
-  border-radius: 18px;
-  background: var(--fp-surface);
-}
-
-.fp-feature--wide {
-  grid-column: span 8;
-  min-height: 300px;
-  background:
-    radial-gradient(circle at 88% 16%, rgba(18, 201, 214, 0.09), transparent 34%),
-    var(--fp-surface);
-}
-
-.fp-feature:nth-child(3) {
-  grid-column: span 7;
-}
-
-.fp-feature:nth-child(4) {
-  grid-column: span 5;
-}
-
-.fp-feature-heading {
-  display: flex;
-  gap: 0.85rem;
-  align-items: flex-start;
-}
-
-.fp-feature-mark {
-  display: grid;
-  width: 2.1rem;
-  height: 2.1rem;
-  flex: none;
-  place-items: center;
-  border: 1px solid var(--fp-line);
-  border-radius: 8px;
-  color: var(--fp-mint);
-}
-
-.fp-feature-label {
-  margin: 0 0 0.35rem;
-  color: var(--fp-muted);
-  font-family: var(--fp-mono);
-  font-size: 0.6rem;
-}
-
-.fp-feature h3 {
-  margin: 0;
-  color: var(--fp-ink);
-  font-size: 1.15rem;
-  font-weight: 500;
-  letter-spacing: -0.035em;
-  line-height: 1.2;
-}
-
-.fp-feature > p {
-  max-width: 36rem;
-  margin: 1rem 0 0;
-  color: var(--fp-muted);
-  font-size: 0.84rem;
-  line-height: 1.72;
-}
-
-.fp-feature code {
-  color: var(--fp-cyan);
-  font-family: var(--fp-mono);
-  font-size: 0.78em;
-}
-
-.fp-pipeline {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.45rem;
-  margin-top: auto;
-  padding-top: 1.6rem;
-  color: var(--fp-ink);
+  justify-content: space-between;
+  gap: 1rem;
+  width: min(100%, 520px);
+  margin: 1rem auto 0;
+  color: var(--fp-faint);
   font-family: var(--fp-mono);
   font-size: 0.62rem;
 }
 
-.fp-pipeline span {
-  padding: 0.42rem 0.5rem;
-  border: 1px solid var(--fp-line);
-  border-radius: 5px;
-  background: rgba(6, 16, 18, 0.28);
-}
-
-.fp-pipeline i {
-  width: 0.9rem;
-  height: 1px;
-  background: var(--fp-line);
-}
-
-.fp-track-preview {
+.fp-bento {
   display: grid;
-  gap: 0.35rem;
-  margin-top: auto;
-  padding-top: 1.3rem;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 1rem;
 }
 
-.fp-track-preview div {
+.fp-bento-card {
+  padding: 2rem;
+  border: 1px solid var(--fp-border);
+  border-radius: 16px;
+  background: var(--fp-card);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.fp-bento-intro {
+  grid-column: span 6;
+}
+
+.fp-bento-audio {
+  grid-column: span 3;
+  background:
+    radial-gradient(circle at 90% 8%, rgba(30, 127, 255, 0.08), transparent 34%),
+    var(--fp-card);
+}
+
+.fp-bento-surface {
+  grid-column: span 3;
+}
+
+.fp-bento-distribution {
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: 3rem;
+  align-items: center;
+}
+
+.fp-card-eyebrow {
+  margin: 0 0 0.75rem;
+  color: var(--fp-blue);
+  font-family: var(--fp-mono);
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.fp-bento-card h3 {
+  margin: 0;
+  color: var(--fp-ink);
+  font-size: clamp(1.35rem, 2.2vw, 1.85rem);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.15;
+}
+
+.fp-card-copy {
+  margin: 0.9rem 0 0;
+  color: var(--fp-muted);
+  font-size: 0.92rem;
+  line-height: 1.65;
+}
+
+.fp-chip-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 1.5rem;
+}
+
+.fp-chip-grid span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.55rem;
+  border: 1px solid var(--fp-border);
+  border-radius: 5px;
+  color: var(--fp-muted);
+  font-family: var(--fp-mono);
+  font-size: 0.65rem;
+}
+
+.fp-chip-grid i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.fp-track-widget {
+  margin-top: 1.5rem;
+  padding: 0.7rem;
+  border: 1px solid var(--fp-border);
+  border-radius: 8px;
+  background: var(--fp-page);
+}
+
+.fp-track-widget-bar {
+  display: flex;
+  gap: 0.25rem;
+  padding-bottom: 0.55rem;
+}
+
+.fp-track-widget-bar span {
+  width: 0.35rem;
+  height: 0.35rem;
+  border-radius: 50%;
+  background: var(--fp-border-strong);
+}
+
+.fp-track-widget-row {
   display: flex;
   align-items: center;
-  gap: 0.45rem;
-  min-height: 2rem;
-  padding: 0 0.5rem;
-  border: 1px solid var(--fp-line);
-  border-radius: 6px;
+  gap: 0.4rem;
+  min-height: 1.8rem;
   color: var(--fp-muted);
   font-family: var(--fp-mono);
   font-size: 0.58rem;
 }
 
-.fp-track-preview div:first-child {
-  color: var(--fp-ink);
-  background: rgba(18, 201, 214, 0.06);
-}
-
-.fp-track-preview i {
-  width: 0.35rem;
-  height: 0.35rem;
+.fp-track-widget-row i {
+  width: 0.4rem;
+  height: 0.4rem;
+  border: 1px solid var(--fp-border-strong);
   border-radius: 50%;
-  background: var(--fp-muted);
 }
 
-.fp-track-preview div:first-child i {
-  background: var(--fp-mint);
-}
-
-.fp-track-preview b {
+.fp-track-widget-row b {
   margin-left: auto;
-  color: var(--fp-mint);
-  font-size: 0.52rem;
-  font-weight: 400;
+  color: var(--fp-blue);
+  font-size: 0.55rem;
+  font-weight: 500;
+}
+
+.fp-track-widget-row.is-selected {
+  color: var(--fp-ink);
+}
+
+.fp-track-widget-row.is-selected i {
+  border-color: var(--fp-blue);
+  background: var(--fp-blue);
+}
+
+.fp-surface-widget {
+  display: flex;
+  align-items: end;
+  gap: 0.45rem;
+  height: 7rem;
+  margin-top: 1.35rem;
+  padding: 0.7rem;
+  border: 1px solid var(--fp-border);
+  border-radius: 8px;
+  background: var(--fp-page);
+}
+
+.fp-surface-widget span {
+  display: block;
+  border: 1px solid var(--fp-border-strong);
+  border-radius: 4px;
+  background: var(--fp-card);
+}
+
+.fp-surface-phone {
+  width: 24%;
+  height: 72%;
+}
+
+.fp-surface-window {
+  width: 38%;
+  height: 82%;
+}
+
+.fp-surface-wide {
+  width: 38%;
+  height: 94%;
+  border-color: var(--fp-blue);
+}
+
+.fp-package-stack {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.5rem;
+}
+
+.fp-package-stack span {
+  display: flex;
+  min-height: 4rem;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 0.75rem;
+  border: 1px solid var(--fp-border);
+  border-radius: 6px;
+  background: var(--fp-page);
+}
+
+.fp-package-stack b {
+  color: var(--fp-blue);
+  font-family: var(--fp-mono);
+  font-size: 0.68rem;
+  font-weight: 500;
+}
+
+.fp-package-stack small {
+  color: var(--fp-faint);
+  font-family: var(--fp-mono);
+  font-size: 0.55rem;
+}
+
+.fp-code-section {
+  padding: 120px 0;
+  color: #ffffff;
+  background: var(--fp-surface);
 }
 
 .fp-code-layout {
   display: grid;
-  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
-  gap: clamp(2rem, 6vw, 6rem);
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  gap: clamp(2.5rem, 7vw, 7rem);
   align-items: center;
 }
 
 .fp-code-copy h2 {
-  max-width: 12ch;
+  color: #ffffff;
+}
+
+.fp-code-copy h2 em {
+  color: var(--fp-blue);
+  font-family: var(--fp-serif);
+  font-size: 1.12em;
+  font-style: italic;
+  font-weight: 400;
 }
 
 .fp-code-copy > p:not(.fp-eyebrow) {
-  max-width: 32rem;
-  margin: 1.5rem 0 0;
-  color: var(--fp-muted);
-  font-size: 0.98rem;
-  line-height: 1.75;
+  color: rgba(255, 255, 255, 0.6);
 }
 
 .fp-steps {
   display: grid;
-  gap: 1.1rem;
-  margin: 2.2rem 0 0;
+  gap: 0.9rem;
+  margin: 2rem 0;
   padding: 0;
   list-style: none;
 }
 
 .fp-steps li {
   display: grid;
-  grid-template-columns: 2.2rem minmax(0, 1fr);
+  grid-template-columns: 2rem minmax(0, 1fr);
   gap: 0.8rem;
+  align-items: start;
 }
 
-.fp-steps li > span {
-  color: var(--fp-mint);
+.fp-steps span {
+  color: var(--fp-blue);
   font-family: var(--fp-mono);
-  font-size: 0.7rem;
-}
-
-.fp-steps strong {
-  color: var(--fp-ink);
-  font-size: 0.88rem;
-  font-weight: 500;
+  font-size: 0.68rem;
 }
 
 .fp-steps p {
-  margin: 0.25rem 0 0;
-  color: var(--fp-muted);
-  font-size: 0.8rem;
-  line-height: 1.6;
+  margin: 0;
+  color: rgba(255, 255, 255, 0.68);
+  font-size: 0.9rem;
 }
 
-.fp-code-panel {
-  --fp-ink: #effafb;
-  --fp-muted: #9bb4b7;
-  --fp-line: rgba(214, 244, 246, 0.14);
-  --fp-cyan: #6fe4eb;
-  --fp-mint: #12c9d6;
-  --fp-accent: #12c9d6;
-  min-width: 0;
+.fp-text-link {
+  color: var(--fp-blue);
+  font-family: var(--fp-sans);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.fp-text-link--dark {
+  color: #ffffff;
+  text-decoration: underline;
+  text-decoration-color: rgba(255, 255, 255, 0.3);
+  text-underline-offset: 0.3em;
+}
+
+.fp-code-card {
   overflow: hidden;
-  border: 1px solid var(--fp-line);
+  border: 1px solid rgba(255, 255, 255, 0.07);
   border-radius: 16px;
-  background: #081416;
-  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.28);
+  background: var(--fp-surface-2);
+  box-shadow: 0 16px 56px rgba(0, 0, 0, 0.2);
 }
 
 .fp-code-bar,
@@ -1629,132 +1504,153 @@ html[data-theme='dark'] .fp-home {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 0.8rem;
-  color: var(--fp-muted);
+  gap: 1rem;
+  color: rgba(255, 255, 255, 0.4);
   font-family: var(--fp-mono);
-  font-size: 0.6rem;
+  font-size: 0.62rem;
 }
 
 .fp-code-bar {
-  padding: 0.7rem 0.9rem;
-  border-bottom: 1px solid var(--fp-line);
+  padding: 0.8rem 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
 }
 
-.fp-code-bar > span:first-child {
+.fp-code-dots {
   display: flex;
   gap: 0.3rem;
 }
 
-.fp-code-bar i {
+.fp-code-dots i {
   width: 0.4rem;
   height: 0.4rem;
   border-radius: 50%;
-  background: rgba(239, 250, 251, 0.2);
+  background: rgba(255, 255, 255, 0.22);
 }
 
 .fp-code-bar > span:last-child {
-  color: var(--fp-cyan);
+  color: var(--fp-blue);
 }
 
-.fp-code-panel pre {
+.fp-code-card pre {
   margin: 0;
-  padding: 1.5rem;
+  padding: 1.6rem;
   overflow-x: auto;
-  color: #d9f0f1;
+  color: #d8dee9;
   font-family: var(--fp-mono);
-  font-size: clamp(0.7rem, 1vw, 0.82rem);
+  font-size: clamp(0.72rem, 1vw, 0.86rem);
   line-height: 1.9;
 }
 
-.fp-code-panel code {
+.fp-code-card code {
   font-family: inherit;
 }
 
-.fp-code-comment {
-  color: #66878c;
+.fp-c-comment {
+  color: #666b78;
 }
 
-.fp-code-keyword {
-  color: var(--fp-mint);
+.fp-c-keyword {
+  color: #c792ea;
+}
+
+.fp-c-string {
+  color: #c3e88d;
+}
+
+.fp-c-function {
+  color: #82aaff;
 }
 
 .fp-code-foot {
-  padding: 0.75rem 0.9rem;
-  border-top: 1px solid var(--fp-line);
+  padding: 0.8rem 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.fp-cta-section {
+  position: relative;
+  overflow: hidden;
+  padding: 120px 0;
+  background: var(--fp-page);
+}
+
+.fp-cta-shapes {
+  opacity: 0.5;
+}
+
+.fp-shape--small {
+  opacity: 0.7;
+}
+
+.fp-cta-shapes .fp-shape-blue {
+  top: 12%;
+  left: 6%;
+  width: 14rem;
+  height: 10rem;
+}
+
+.fp-cta-shapes .fp-shape-red {
+  top: 8%;
+  right: 12%;
+  width: 4.5rem;
+  height: 4.5rem;
+}
+
+.fp-cta-shapes .fp-shape-yellow {
+  right: 3%;
+  bottom: 8%;
+  width: 9rem;
+  height: 7rem;
+}
+
+.fp-cta-shapes .fp-shape-teal {
+  bottom: -4%;
+  left: 22%;
+  width: 3rem;
+  height: 9rem;
 }
 
 .fp-cta {
-  padding: clamp(5rem, 10vw, 9rem) 0;
-  border-top: 1px solid var(--fp-line);
-}
-
-.fp-cta-inner {
   position: relative;
-  overflow: hidden;
-  padding: clamp(2rem, 5vw, 4.5rem);
-  border: 1px solid var(--fp-cta-border);
-  border-radius: 22px;
-  background:
-    radial-gradient(circle at 82% 18%, rgba(18, 201, 214, 0.13), transparent 30%),
-    var(--fp-cta-bg);
+  z-index: 1;
+  max-width: 900px;
+  text-align: center;
 }
 
 .fp-cta h2 {
-  max-width: 18ch;
+  font-family: var(--fp-serif);
+  font-size: clamp(4.5rem, 10vw, 9rem);
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.03em;
+  line-height: 0.86;
 }
 
-.fp-cta-inner > p:not(.fp-eyebrow) {
-  max-width: 35rem;
-  margin: 1.3rem 0 1.8rem;
-  color: var(--fp-muted);
-  font-size: 0.98rem;
-  line-height: 1.7;
+.fp-cta h2 em {
+  color: var(--fp-blue);
+  font-style: italic;
+}
+
+.fp-cta > p:not(.fp-eyebrow) {
+  max-width: 580px;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.fp-cta .fp-eyebrow {
+  justify-content: center;
 }
 
 .fp-cta-platforms {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.45rem;
-  max-width: 24rem;
   margin-top: 2rem;
 }
 
 .fp-cta-platforms span {
-  display: flex;
-  min-height: 2.15rem;
-  align-items: center;
-  gap: 0.45rem;
-  padding: 0.35rem 0.55rem;
-  border: 1px solid var(--fp-line);
-  border-radius: 6px;
+  border-color: var(--fp-border);
   color: var(--fp-muted);
-  font-family: var(--fp-mono);
-  font-size: 0.58rem;
-}
-
-.fp-cta-platforms .platform-glyph {
-  width: 0.85rem;
-  height: 0.85rem;
-  color: var(--fp-mint);
-}
-
-.fp-cta-platforms span:last-child {
-  grid-column: span 2;
-}
-
-@media (min-width: 1101px) {
-  .fp-cta-platforms {
-    position: absolute;
-    top: 50%;
-    right: clamp(2rem, 5vw, 4.5rem);
-    width: 21rem;
-    margin-top: 0;
-    transform: translateY(-50%);
-  }
 }
 
 .fp-home :focus-visible {
-  outline: 2px solid var(--fp-accent);
+  outline: 2px solid var(--fp-blue);
   outline-offset: 4px;
 }
 
@@ -1763,74 +1659,62 @@ html[data-theme='dark'] .fp-home {
 }
 
 @keyframes fp-pulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(18, 201, 214, 0.4); }
-  50% { box-shadow: 0 0 0 0.42rem rgba(18, 201, 214, 0); }
-}
-
-@keyframes fp-scan {
-  0%, 35% { transform: translateX(-120%); }
-  65%, 100% { transform: translateX(120%); }
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
 }
 
 @media (hover: hover) and (pointer: fine) {
   .fp-button:hover {
-    transform: translateY(-2px);
+    transform: translateY(-1px);
   }
 
-  .fp-button--primary:hover {
-    background: #3adde6;
+  .fp-button--blue:hover {
+    background: #0d6de8;
   }
 
-  .fp-text-link:hover {
-    color: var(--fp-mint);
-    text-decoration-color: var(--fp-mint);
+  .fp-button--dark:hover {
+    background: #2a2a30;
   }
 
-  .fp-platform-tab:hover {
-    border-color: var(--fp-line);
-    background: var(--fp-hover-surface);
+  .fp-button--ghost:hover,
+  .fp-button--ghost-dark:hover {
+    border-color: var(--fp-blue);
+    color: var(--fp-blue);
+  }
+
+  .fp-platform-option:hover {
+    background: color-mix(in srgb, var(--fp-blue) 5%, var(--fp-card));
+  }
+
+  .fp-bento-card:hover {
+    border-color: color-mix(in srgb, var(--fp-blue) 30%, var(--fp-border));
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
   }
 }
 
 @media (max-width: 1024px) {
-  .fp-hero-inner {
+  .fp-flag-card {
     grid-template-columns: minmax(0, 1fr);
+    gap: 2rem;
   }
 
-  .fp-hero-visual {
-    min-height: 470px;
+  .fp-preview-wrap {
+    padding-top: 0;
   }
 
-  .fp-orbit {
-    width: min(100%, 430px);
+  .fp-bento-intro,
+  .fp-bento-audio,
+  .fp-bento-surface {
+    grid-column: span 12;
   }
 
-  .fp-platform-layout {
+  .fp-bento-distribution {
     grid-template-columns: minmax(0, 1fr);
-    gap: 1.8rem;
+    gap: 1.5rem;
   }
 
-  .fp-platform-tabs {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 0.45rem;
-  }
-
-  .fp-platform-tab {
-    min-height: 58px;
-  }
-
-  .fp-platform-stage {
-    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
-  }
-}
-
-@media (max-width: 980px) {
-  .fp-feature,
-  .fp-feature--wide,
-  .fp-feature:nth-child(3),
-  .fp-feature:nth-child(4) {
-    grid-column: 1 / -1;
+  .fp-package-stack {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .fp-code-layout {
@@ -1839,104 +1723,128 @@ html[data-theme='dark'] .fp-home {
 }
 
 @media (max-width: 720px) {
-  .fp-shell,
-  .fp-scroll-cue {
-    width: min(100% - 32px, 1180px);
+  .fp-container {
+    width: min(100% - 48px, 1200px);
   }
 
   .fp-hero {
-    min-height: auto;
+    min-height: 780px;
     padding-top: 7rem;
   }
 
+  .fp-eyebrow--dark {
+    font-size: 0.62rem;
+    letter-spacing: 0.12em;
+  }
+
+  .fp-eyebrow-version {
+    display: none;
+  }
+
   .fp-hero h1 {
-    font-size: clamp(2.3rem, 10.5vw, 3.1rem);
+    font-size: clamp(3.4rem, 13vw, 5.2rem);
   }
 
-  .fp-hero-visual {
-    min-height: 0;
-    margin-top: 1.5rem;
+  .fp-hero-sub {
+    max-width: 30rem;
   }
 
-  .fp-orbit {
-    width: min(100%, 350px);
+  .fp-hero-foot {
+    display: none;
   }
 
-  .fp-orbit-node {
-    padding: 0.42rem 0.5rem;
-    font-size: 0.55rem;
+  .fp-scroll-hint {
+    display: none;
   }
 
-  .fp-orbit-node .platform-glyph {
-    width: 0.8rem;
-    height: 0.8rem;
+  .fp-shape-blue {
+    top: 8%;
+    left: -70%;
+    width: 18rem;
+    height: 13rem;
+    opacity: 0.8;
   }
 
-  .fp-node-ios {
-    right: -1%;
+  .fp-shape-yellow {
+    right: -28%;
+    bottom: 7%;
   }
 
-  .fp-node-ohos {
-    left: -1%;
+  .fp-shape-teal {
+    bottom: -12%;
+    left: 8%;
   }
 
-  .fp-signal-card {
-    width: min(100%, 19rem);
-    margin-top: 1.1rem;
+  .fp-shape-red {
+    top: 4%;
+    right: 4%;
+    width: 4rem;
+    height: 4rem;
   }
 
-  .fp-proof {
-    gap: 1.6rem;
+  .fp-shape-green {
+    display: none;
   }
 
-  .fp-platform-tabs {
-    display: flex;
-    flex-direction: row;
-    overflow-x: auto;
-    padding-bottom: 0.3rem;
-    scrollbar-width: thin;
+  .fp-section,
+  .fp-code-section,
+  .fp-cta-section {
+    padding: 80px 0;
   }
 
-  .fp-platform-tab {
-    min-width: 11rem;
-    flex: 0 0 auto;
+  .fp-section-head {
+    margin-bottom: 2.25rem;
   }
 
-  .fp-platform-stage {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 2rem;
+  .fp-section-head h2,
+  .fp-code-copy h2 {
+    font-size: clamp(2rem, 9vw, 2.8rem);
   }
 
-  .fp-device {
-    width: min(100%, 290px);
+  .fp-flag-card {
+    padding: 1.25rem;
   }
 
-  .fp-device--desktop {
+  .fp-platform-name {
+    display: block;
+  }
+
+  .fp-platform-name small {
+    display: block;
+    margin-top: 0.12rem;
+  }
+
+  .fp-preview {
+    width: min(100%, 310px);
+  }
+
+  .fp-preview--desktop {
     width: 100%;
   }
 
-  .fp-feature,
-  .fp-feature--wide {
-    grid-column: 1 / -1;
-    min-height: 0;
+  .fp-bento-card {
+    padding: 1.4rem;
   }
 
-  .fp-feature:nth-child(3),
-  .fp-feature:nth-child(4) {
-    grid-column: 1 / -1;
+  .fp-bento-distribution {
+    padding: 1.4rem;
   }
 
-  .fp-code-layout {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .fp-code-panel pre {
+  .fp-code-card pre {
     padding: 1.1rem;
   }
 
   .fp-code-foot {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .fp-cta h2 {
+    font-size: clamp(4rem, 18vw, 6rem);
+  }
+
+  .fp-cta-platforms span {
+    font-size: 0.62rem;
   }
 }
 

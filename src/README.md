@@ -13,7 +13,7 @@ actions:
     link: /basic/api
     type: default
 copyright: false
-footer: 使用 <a href="https://theme-hope.vuejs.press/" target="_blank">VuePress Theme Hope</a> 主题, 版权所有 © fplayer -- Flutter plugin for video player
+footer: © Fplayer
 ---
 
 <HomePage />

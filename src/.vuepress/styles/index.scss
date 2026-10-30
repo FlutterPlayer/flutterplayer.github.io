@@ -1,10 +1,70 @@
-// place your custom styles here
+// Booleans-inspired documentation chrome.
 
-/* Home page: let the custom landing sections own the full viewport. */
+body {
+  color: #1a1a1a;
+  background: #fafafa;
+  font-family: 'Geist Variable', 'Geist', system-ui, sans-serif;
+}
+
+.theme-hope-content {
+  color: #1a1a1a;
+  font-family: 'Geist Variable', 'Geist', system-ui, sans-serif;
+  font-size: 17px;
+  line-height: 1.7;
+}
+
+.theme-hope-content h1,
+.theme-hope-content h2,
+.theme-hope-content h3,
+.theme-hope-content h4 {
+  color: #1a1a1a;
+  font-family: 'Geist Variable', 'Geist', system-ui, sans-serif;
+  letter-spacing: -0.02em;
+}
+
+.theme-hope-content h1 {
+  font-family: 'Instrument Serif', Georgia, serif;
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.03em;
+}
+
+.page-title h1 {
+  color: #1a1a1a;
+  font-family: 'Instrument Serif', Georgia, serif;
+  font-size: clamp(2.5rem, 6vw, 4rem);
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+
+html[data-theme='dark'] .page-title h1 {
+  color: #ffffff;
+}
+
+.theme-hope-content code,
+.theme-hope-content pre,
+.theme-hope-content kbd {
+  font-family: 'Geist Mono Variable', 'Geist Mono', 'Fira Code', monospace;
+}
+
+.theme-hope-content a {
+  color: #1e7fff;
+}
+
+.navbar .site-name {
+  font-family: 'Instrument Serif', Georgia, serif;
+  font-size: 1.45rem;
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+}
+
 main.home {
   max-width: none;
   padding: 0;
-  background: #f4fbfc;
+  background: #fafafa;
 }
 
 main.home > .hero-info-wrapper {
@@ -18,78 +78,99 @@ main.home .theme-hope-content {
 }
 
 body:has(.fp-home) {
-  color: #082126;
-  background: #f4fbfc;
+  color: #1a1a1a;
+  background: #fafafa;
 }
 
 body:has(.fp-home) .navbar {
-  border-bottom-color: rgba(8, 33, 38, 0.12);
-  background: rgba(247, 252, 252, 0.84);
-  backdrop-filter: blur(18px);
+  border-bottom-color: rgba(0, 0, 0, 0.08);
+  background: #fafafa;
 }
 
 body:has(.fp-home) .navbar .brand,
 body:has(.fp-home) .navbar .nav-links a,
 body:has(.fp-home) .navbar .site-name,
 body:has(.fp-home) .navbar .toggle-sidebar-button {
-  color: #082126;
+  color: #1a1a1a;
+}
+
+body:has(.fp-home) .navbar .site-name {
+  color: #1a1a1a;
+  font-family: 'Instrument Serif', Georgia, serif;
+  font-size: 1.45rem;
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.02em;
 }
 
 body:has(.fp-home) .navbar .nav-links a.active,
 body:has(.fp-home) .navbar .nav-links a:hover {
-  border-color: #087e89;
-  color: #087e89;
+  border-color: #1e7fff;
+  color: #1e7fff;
 }
 
 body:has(.fp-home) .footer-wrapper {
-  border-top: 1px solid rgba(8, 33, 38, 0.12);
-  color: #547177;
-  background: #f4fbfc;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  color: #666666;
+  background: #fafafa;
 }
 
 body:has(.fp-home) .footer-wrapper a {
-  color: #087e89;
+  color: #1e7fff;
 }
 
 body:has(.fp-home) .back-to-top {
   display: none;
 }
 
+html[data-theme='dark'] body {
+  color: #ffffff;
+  background: #0d0d0f;
+}
+
+html[data-theme='dark'] .theme-hope-content,
+html[data-theme='dark'] .theme-hope-content h1,
+html[data-theme='dark'] .theme-hope-content h2,
+html[data-theme='dark'] .theme-hope-content h3,
+html[data-theme='dark'] .theme-hope-content h4 {
+  color: #ffffff;
+}
+
 html[data-theme='dark'] main.home {
-  background: #061012;
+  background: #0d0d0f;
 }
 
 html[data-theme='dark'] body:has(.fp-home) {
-  color: #effafb;
-  background: #061012;
+  color: #ffffff;
+  background: #0d0d0f;
 }
 
 html[data-theme='dark'] body:has(.fp-home) .navbar {
-  border-bottom-color: rgba(214, 244, 246, 0.12);
-  background: rgba(6, 16, 18, 0.78);
+  border-bottom-color: rgba(255, 255, 255, 0.07);
+  background: #0d0d0f;
 }
 
 html[data-theme='dark'] body:has(.fp-home) .navbar .brand,
 html[data-theme='dark'] body:has(.fp-home) .navbar .nav-links a,
 html[data-theme='dark'] body:has(.fp-home) .navbar .site-name,
 html[data-theme='dark'] body:has(.fp-home) .navbar .toggle-sidebar-button {
-  color: #effafb;
+  color: #ffffff;
 }
 
 html[data-theme='dark'] body:has(.fp-home) .navbar .nav-links a.active,
 html[data-theme='dark'] body:has(.fp-home) .navbar .nav-links a:hover {
-  border-color: #12c9d6;
-  color: #12c9d6;
+  border-color: #1e7fff;
+  color: #1e7fff;
 }
 
 html[data-theme='dark'] body:has(.fp-home) .footer-wrapper {
-  border-top-color: rgba(214, 244, 246, 0.12);
-  color: #9bb4b7;
-  background: #061012;
+  border-top-color: rgba(255, 255, 255, 0.07);
+  color: rgba(255, 255, 255, 0.6);
+  background: #0d0d0f;
 }
 
 html[data-theme='dark'] body:has(.fp-home) .footer-wrapper a {
-  color: #12c9d6;
+  color: #1e7fff;
 }
 
 @media (max-width: 720px) {
