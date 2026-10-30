@@ -1,5 +1,7 @@
 import { hopeTheme } from "vuepress-theme-hope";
+import { enNavbar } from "./navbar/index.js";
 import { zhNavbar } from "./navbar/index.js";
+import { enSidebar } from "./sidebar/index.js";
 import { zhSidebar } from "./sidebar/index.js";
 
 export default hopeTheme({
@@ -19,21 +21,32 @@ export default hopeTheme({
   docsDir: "demo/theme-docs/src",
 
   locales: {
-    // "/en/": {
-    //   // navbar
-    //   navbar: enNavbar,
+    "/en/": {
+      // navbar
+      navbar: enNavbar,
 
-    //   // sidebar
-    //   sidebar: enSidebar,
+      // sidebar
+      sidebar: enSidebar,
 
-    //   footer: "Default footer",
+      footer: "Built with <a href=\"https://theme-hope.vuejs.press/\" target=\"_blank\">VuePress Theme Hope</a>",
 
-    //   displayFooter: true,
+      displayFooter: true,
 
-    //   editLink: false,
+      editLink: false,
 
-    //   pageInfo: false,
-    // },
+      pageInfo: false,
+
+      contributors: false,
+
+      lastUpdated: false,
+
+      home: "/en/",
+
+      navbarLocales: {
+        langName: "English",
+        selectLangAriaLabel: "Select language",
+      },
+    },
 
     /**
      * Chinese locale config
@@ -56,6 +69,13 @@ export default hopeTheme({
       contributors: false,
 
       lastUpdated: false,
+
+      home: "/",
+
+      navbarLocales: {
+        langName: "简体中文",
+        selectLangAriaLabel: "选择语言",
+      },
     },
   },
 

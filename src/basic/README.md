@@ -12,7 +12,7 @@ Android 内核 AAR 发布在 Maven Central；iOS/macOS xcframework、Windows DLL
 [点击此处](/basic/status)可以快速了解播放器之间的状态以及各个状态的变化以及如何触发这个状态的变化
 
 ## 播放器API
-[点击此处](/basic/api)可以查看播放器提供API函数以及如何正确的使用的示例，包括音轨查询与切换。
+[点击此处](/basic/api)可以查看播放器提供API函数以及如何正确的使用的示例，包括音轨与字幕轨查询和切换。
 
 ## 内置UI
 [点击此处](/skin/immanent)可以查看 fplayer_ui 提供的默认面板、手势和高级配置。

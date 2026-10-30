@@ -196,6 +196,60 @@ if (tracks.isNotEmpty) {
 
 `track.index` 必须是 `getAudioTracks` 返回的音轨索引。切换后可以再次调用 `getAudioTracks` 确认 `selected` 状态。
 
+## 字幕
+
+字幕轨与音轨使用同样的发现和切换流程，播放器默认开启字幕解码。Android、iOS、macOS、Windows 和 OpenHarmony 均支持。`FView` 默认在画面底部渲染当前字幕，也可以通过 `showSubtitles: false` 关闭内置字幕层。
+
+### FSubtitleTrack
+
+| 字段 | 类型 | 说明 |
+| --- | --- | --- |
+| `index` | `int` | 字幕轨的流索引，切换时使用 |
+| `language` | `String?` | 字幕语言 |
+| `codec` | `String?` | 编码短名称，例如 `subrip` |
+| `codecLongName` | `String?` | 编码完整名称 |
+| `selected` | `bool` | 是否为当前选中的字幕轨 |
+
+### getSubtitleTracks
+```dart
+Future<List<FSubtitleTrack>> getSubtitleTracks() async
+```
+```dart
+final tracks = await fplayer.getSubtitleTracks();
+for (final track in tracks) {
+  print('${track.index} ${track.language} ${track.codec} ${track.selected}');
+}
+```
+
+返回当前媒体的字幕轨列表。播放器尚未准备完成或媒体没有字幕轨时返回空列表。
+
+### setSubtitleTrack
+```dart
+Future<void> setSubtitleTrack(FSubtitleTrack? track) async
+```
+```dart
+final tracks = await fplayer.getSubtitleTracks();
+if (tracks.isNotEmpty) {
+  await fplayer.setSubtitleTrack(tracks.first);
+}
+// 关闭字幕
+await fplayer.setSubtitleTrack(null);
+```
+
+`track.index` 必须是 `getSubtitleTracks` 返回的字幕轨索引。传入 `null` 会取消当前选中的字幕轨。
+
+### 字幕文本
+
+`FView` 默认显示字幕文本。使用自定义字幕层时，可以监听 `onSubtitleTextUpdate` 或读取 `subtitleText`：
+
+```dart
+final subscription = fplayer.onSubtitleTextUpdate.listen((text) {
+  print(text ?? '');
+});
+```
+
+事件中的 `text` 为空时表示当前字幕已经结束，需要隐藏字幕层。
+
 ### enterFullScreen
 ```dart 
 void enterFullScreen()

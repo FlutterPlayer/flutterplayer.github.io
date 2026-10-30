@@ -26,6 +26,7 @@ FView({
   Color color = const Color(0xFF607D8B),
   ImageProvider? cover,
   bool fs = true,
+  bool showSubtitles = true,
   void Function(FData)? onDispose,
 });
 ```
@@ -34,6 +35,7 @@ FView({
 - `data`：全屏和非全屏面板共享的数据容器；面板销毁后数据仍可保留。
 - `viewSize`：`FView` 的实际显示尺寸。
 - `texturePos`：视频纹理在 `FView` 中的位置，可能超出 `FView` 边界。
+- `showSubtitles`：是否显示内置字幕层；使用自定义字幕层时设为 `false`。
 - `onDispose`：`FView` 销毁时恢复系统设置或清理面板状态。
 
 `FFit.contain`、`FFit.fill`、`FFit.cover` 分别控制视频在目标区域内的填充方式；全屏使用 `fsFit`，普通模式使用 `fit`。

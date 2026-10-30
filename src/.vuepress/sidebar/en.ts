@@ -10,9 +10,21 @@ export const enSidebar = sidebar({
       children: "structure",
     },
     {
-      text: "Basic",
-      icon: "note",
+      text: "Skin",
+      icon: "style",
+      prefix: "skin/",
+      children: "structure",
+    },
+    {
+      text: "Basics",
+      icon: "module",
       prefix: "basic/",
+      children: "structure",
+    },
+    {
+      text: "Kernel",
+      icon: "process",
+      prefix: "core/",
       children: "structure",
     },
   ],

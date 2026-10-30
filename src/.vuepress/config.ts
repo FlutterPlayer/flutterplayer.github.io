@@ -22,11 +22,11 @@ export default defineUserConfig({
       title: "Fplayer",
       description: "Fplayer：一套 Dart API，五端原生播放的 Flutter 媒体播放器。",
     },
-    // "/en/": {
-    //   lang: "en-US",
-    //   title: "fplayer--Flutter plugin for fijkplayer",
-    //   description: "A docs demo for vuepress-theme-hope",
-    // },
+    "/en/": {
+      lang: "en-US",
+      title: "Fplayer",
+      description: "Fplayer: one Dart API for five native Flutter media targets.",
+    },
   },
 
   plugins: [

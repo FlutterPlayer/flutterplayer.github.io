@@ -1,94 +1,15 @@
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue';
+import { useRouteLocale } from '@vuepress/client';
+import { copies, platformSets, type PlatformId } from './homeContent';
 
-type PlatformId = 'android' | 'ios' | 'macos' | 'windows' | 'ohos';
-type PlatformIcon = 'android' | 'apple' | 'windows' | 'ohos';
-type DeviceKind = 'phone' | 'desktop';
-
-interface Platform {
-  id: PlatformId;
-  name: string;
-  detail: string;
-  icon: PlatformIcon;
-  kind: DeviceKind;
-  color: string;
-  headline: string;
-  blurb: string;
-  facts: string[];
-  track: string;
-  codec: string;
-}
-
-const platforms: Platform[] = [
-  {
-    id: 'android',
-    name: 'Android',
-    detail: 'API 28+ · arm64',
-    icon: 'android',
-    kind: 'phone',
-    color: '#1E7FFF',
-    headline: 'Native decode. Texture output.',
-    blurb: 'The same FPlayer call lands on fplayercore and a SurfaceTexture. Your widget tree only sees state.',
-    facts: ['NDK 29 / 16 KB alignment', 'SurfaceTexture output', 'Audio track switching'],
-    track: 'English · AAC',
-    codec: '48 kHz · stereo',
-  },
-  {
-    id: 'ios',
-    name: 'iOS',
-    detail: 'iOS 13+ · arm64',
-    icon: 'apple',
-    kind: 'phone',
-    color: '#2CC26E',
-    headline: 'One API, on native rails.',
-    blurb: 'Swift Package Manager pulls the official xcframework. FPlayer keeps the same Dart surface as Android.',
-    facts: ['Device / arm64 simulator', 'VideoToolbox decode', 'SwiftPM binaryTarget'],
-    track: 'Japanese · AAC',
-    codec: '48 kHz · stereo',
-  },
-  {
-    id: 'macos',
-    name: 'macOS',
-    detail: 'macOS 10.15+ · arm64',
-    icon: 'apple',
-    kind: 'desktop',
-    color: '#F5C842',
-    headline: 'A desktop window is still a stage.',
-    blurb: 'Window resizing, Metal output and fullscreen all reuse the FPlayer state machine and audio API.',
-    facts: ['Metal / CoreVideo', 'Window + fullscreen', 'Same audio track API'],
-    track: 'English · AAC',
-    codec: '48 kHz · stereo',
-  },
-  {
-    id: 'windows',
-    name: 'Windows',
-    detail: 'Windows x64',
-    icon: 'windows',
-    kind: 'desktop',
-    color: '#FF4545',
-    headline: 'A native DLL. One Dart call.',
-    blurb: 'fplayercore is linked through CMake; playback, seek and track selection stay in the shared API.',
-    facts: ['CMake + fplayercore.dll', 'Texture frame handoff', 'Aligned with Dart API'],
-    track: 'English · AAC',
-    codec: '48 kHz · stereo',
-  },
-  {
-    id: 'ohos',
-    name: 'OpenHarmony',
-    detail: 'API 12+ · arm64',
-    icon: 'ohos',
-    kind: 'phone',
-    color: '#2ECAAD',
-    headline: 'A new platform. Not a new player.',
-    blurb: 'NAPI and ArkTS expose fplayercore; FPlayer remains the only player object your Dart code needs.',
-    facts: ['NAPI / ArkTS bridge', 'OHOS HAR distribution', 'Audio track selection'],
-    track: 'Chinese · AAC',
-    codec: '48 kHz · stereo',
-  },
-];
+const routeLocale = useRouteLocale();
+const isEnglish = computed(() => routeLocale.value.startsWith('/en'));
+const copy = computed(() => copies[isEnglish.value ? 'en' : 'zh']);
+const platforms = computed(() => platformSets[isEnglish.value ? 'en' : 'zh']);
 
 const activeId = ref<PlatformId>('android');
-const active = computed(() => platforms.find((platform) => platform.id === activeId.value) ?? platforms[0]);
+const active = computed(() => platforms.value.find((platform) => platform.id === activeId.value) ?? platforms.value[0]);
 const hardwareOn = ref(true);
 const root = ref<HTMLElement>();
 const platformStage = ref<HTMLElement>();
@@ -192,22 +113,21 @@ onBeforeUnmount(() => {
       <div class="fp-container fp-hero-inner">
         <p class="fp-eyebrow fp-eyebrow--dark" data-hero>
           <span class="fp-live-dot"></span>
-          <span>Cross-platform media engine</span>
-          <span class="fp-eyebrow-version">· fplayercore 1.2.12</span>
+          <span>{{ copy.eyebrow }}</span>
+          <span class="fp-eyebrow-version">{{ copy.version }}</span>
         </p>
         <h1 id="fp-hero-title" data-hero>
-          <span>Play once.</span>
-          <span>Everywhere.</span>
+          <span>{{ copy.heroTitleA }}</span>
+          <span>{{ copy.heroTitleB }}</span>
         </h1>
         <p class="fp-hero-sub" data-hero>
-          一套 Dart API，连接 Android、iOS、macOS、Windows 和 OpenHarmony 的原生
-          fplayercore 内核。跨端复用接口，不牺牲平台体验。
+          {{ copy.heroSub }}
         </p>
         <div class="fp-actions" data-hero>
-          <a class="fp-button fp-button--blue" href="/guide/quick">开始构建 <span aria-hidden="true">→</span></a>
-          <a class="fp-button fp-button--ghost-dark" href="/basic/api">查看 API</a>
+          <a class="fp-button fp-button--blue" :href="isEnglish ? '/en/guide/quick' : '/guide/quick'">{{ copy.start }} <span aria-hidden="true">→</span></a>
+          <a class="fp-button fp-button--ghost-dark" :href="isEnglish ? '/en/basic/api' : '/basic/api'">{{ copy.api }}</a>
         </div>
-        <div class="fp-hero-chips" data-hero aria-label="支持的平台">
+        <div class="fp-hero-chips" data-hero :aria-label="copy.platformsAria">
           <span v-for="platform in platforms" :key="platform.id">
             <i :style="{ background: platform.color }"></i>
             {{ platform.name }}
@@ -216,43 +136,41 @@ onBeforeUnmount(() => {
       </div>
 
       <div class="fp-hero-foot" aria-hidden="true">
-        <span>fplayer / five targets</span>
-        <span class="fp-scroll-hint">scroll to explore ↓</span>
+        <span>{{ copy.heroFoot }}</span>
+        <span class="fp-scroll-hint">{{ copy.scroll }}</span>
       </div>
     </section>
 
     <section class="fp-section fp-platform-section" aria-labelledby="fp-platform-title">
       <div class="fp-container">
         <div class="fp-section-head" data-reveal>
-          <p class="fp-eyebrow">One runtime · five targets</p>
-          <h2 id="fp-platform-title">A single player object.<br />Five native surfaces.</h2>
-          <p>Pick a target. The same FPlayer state, texture and audio-track calls land on that platform's native layer.</p>
+          <p class="fp-eyebrow">{{ copy.platformEyebrow }}</p>
+          <h2 id="fp-platform-title">{{ copy.platformTitleA }}<br />{{ copy.platformTitleB }}</h2>
+          <p>{{ copy.platformSub }}</p>
         </div>
 
         <div class="fp-flag-card" data-reveal>
           <div class="fp-flag-copy">
             <div class="fp-flag-top">
-              <span class="fp-live"><i></i> native bridge</span>
+              <span class="fp-live"><i></i> {{ copy.nativeBridge }}</span>
               <button
                 type="button"
                 class="fp-switch"
                 :class="{ 'is-on': hardwareOn }"
                 role="switch"
                 :aria-checked="hardwareOn"
-                aria-label="切换硬件解码状态"
+                :aria-label="copy.hardwareToggleAria"
                 @click="hardwareOn = !hardwareOn"
               >
                 <span class="fp-switch-knob"></span>
               </button>
             </div>
-            <h3>Hardware decode is {{ hardwareOn ? 'on' : 'off' }}.</h3>
+            <h3>{{ hardwareOn ? copy.hardwareOnTitle : copy.hardwareOffTitle }}</h3>
             <p>
-              {{ hardwareOn
-                ? 'The native fplayercore path is active. This is the state FPlayer ships with on every supported platform.'
-                : 'The preview shows a software-only fallback. Switch it back to see the native bridge take over.' }}
+              {{ hardwareOn ? copy.hardwareOnBody : copy.hardwareOffBody }}
             </p>
 
-            <div class="fp-platform-list" role="group" aria-label="选择平台">
+            <div class="fp-platform-list" role="group" :aria-label="copy.selectPlatform">
               <button
                 v-for="platform in platforms"
                 :key="platform.id"
@@ -276,7 +194,7 @@ onBeforeUnmount(() => {
               </button>
             </div>
 
-            <div class="fp-chip-row" aria-label="调用链">
+            <div class="fp-chip-row" :aria-label="copy.callChain">
               <span>Dart FPlayer</span>
               <b>→</b>
               <span>MethodChannel / NAPI</span>
@@ -298,28 +216,28 @@ onBeforeUnmount(() => {
               <div class="fp-preview-screen">
                 <div class="fp-preview-meta">
                   <span>{{ active.detail }}</span>
-                  <span class="fp-preview-status"><i></i>{{ hardwareOn ? 'native' : 'software' }}</span>
+                  <span class="fp-preview-status"><i></i>{{ hardwareOn ? copy.native : copy.software }}</span>
                 </div>
                 <div class="fp-preview-video">
                   <span class="fp-preview-ring"></span>
                   <span class="fp-preview-play">▶</span>
-                  <span class="fp-preview-label">fplayer example · 1080p</span>
+                  <span class="fp-preview-label">{{ copy.exampleLabel }}</span>
                 </div>
                 <div class="fp-preview-progress"><i></i></div>
                 <div class="fp-preview-tracks">
-                  <div class="fp-preview-track-head"><span>Audio tracks</span><span>02</span></div>
+                  <div class="fp-preview-track-head"><span>{{ copy.audioTracks }}</span><span>02</span></div>
                   <div class="fp-preview-track is-selected">
                     <i></i><span>{{ active.track }}</span><small>{{ active.codec }}</small>
                   </div>
                   <div class="fp-preview-track">
-                    <i></i><span>Commentary</span><small>48 kHz · stereo</small>
+                    <i></i><span>{{ copy.commentary }}</span><small>{{ active.codec }}</small>
                   </div>
                 </div>
               </div>
             </div>
             <div class="fp-preview-caption">
               <span>{{ active.headline }}</span>
-              <span>{{ hardwareOn ? 'hardware path' : 'fallback' }}</span>
+              <span>{{ hardwareOn ? copy.hardwarePath : copy.fallback }}</span>
             </div>
           </div>
         </div>
@@ -329,17 +247,17 @@ onBeforeUnmount(() => {
     <section class="fp-section fp-bento-section" aria-labelledby="fp-bento-title">
       <div class="fp-container">
         <div class="fp-section-head" data-reveal>
-          <p class="fp-eyebrow">What stays constant</p>
-          <h2 id="fp-bento-title">The API is shared.<br />The details are not.</h2>
-          <p>Platform teams get their own surfaces and packages. Product teams get one player model.</p>
+          <p class="fp-eyebrow">{{ copy.bentoEyebrow }}</p>
+          <h2 id="fp-bento-title">{{ copy.bentoTitleA }}<br />{{ copy.bentoTitleB }}</h2>
+          <p>{{ copy.bentoSub }}</p>
         </div>
 
         <div class="fp-bento">
           <article class="fp-bento-card fp-bento-intro" data-reveal>
-            <p class="fp-card-eyebrow">One object</p>
-            <h3>Same FPlayer.<br />Five native cores.</h3>
+            <p class="fp-card-eyebrow">{{ copy.oneObject }}</p>
+            <h3>{{ copy.oneObjectTitleA }}<br />{{ copy.oneObjectTitleB }}</h3>
             <p class="fp-card-copy">
-              Create once, then move from a phone to a desktop window without rewriting the playback state machine.
+              {{ copy.oneObjectBody }}
             </p>
             <div class="fp-chip-grid">
               <span v-for="platform in platforms" :key="platform.id">
@@ -349,40 +267,40 @@ onBeforeUnmount(() => {
           </article>
 
           <article class="fp-bento-card fp-bento-audio" data-reveal>
-            <p class="fp-card-eyebrow">Audio tracks</p>
-            <h3>Language is a switch, not a rebuild.</h3>
+            <p class="fp-card-eyebrow">{{ copy.audioEyebrow }}</p>
+            <h3>{{ copy.audioTitle }}</h3>
             <div class="fp-track-widget">
               <div class="fp-track-widget-bar"><span></span><span></span><span></span></div>
               <div class="fp-track-widget-row is-selected">
-                <i></i><span>English · AAC</span><b>on</b>
+                <i></i><span>{{ isEnglish ? 'English · AAC' : '英语 · AAC' }}</span><b>{{ copy.audioOn }}</b>
               </div>
               <div class="fp-track-widget-row">
-                <i></i><span>Commentary</span><b></b>
+                <i></i><span>{{ copy.commentary }}</span><b></b>
               </div>
               <div class="fp-track-widget-row">
-                <i></i><span>Japanese · AAC</span><b></b>
+                <i></i><span>{{ isEnglish ? 'Japanese · AAC' : '日语 · AAC' }}</span><b></b>
               </div>
             </div>
-            <p class="fp-card-copy">Read language, codec and sample rate. Select a stream by index.</p>
+            <p class="fp-card-copy">{{ copy.audioBody }}</p>
           </article>
 
           <article class="fp-bento-card fp-bento-surface" data-reveal>
-            <p class="fp-card-eyebrow">Adaptive surface</p>
-            <h3>One frame, every screen.</h3>
+            <p class="fp-card-eyebrow">{{ copy.surfaceEyebrow }}</p>
+            <h3>{{ copy.surfaceTitle }}</h3>
             <div class="fp-surface-widget" aria-hidden="true">
               <span class="fp-surface-phone"></span>
               <span class="fp-surface-window"></span>
               <span class="fp-surface-wide"></span>
             </div>
-            <p class="fp-card-copy">Rotation, resize and fullscreen are handled by FView and the native texture.</p>
+            <p class="fp-card-copy">{{ copy.surfaceBody }}</p>
           </article>
 
           <article class="fp-bento-card fp-bento-distribution" data-reveal>
             <div>
-              <p class="fp-card-eyebrow">Distribution</p>
-              <h3>Each platform gets its own official package.</h3>
+              <p class="fp-card-eyebrow">{{ copy.distributionEyebrow }}</p>
+              <h3>{{ copy.distributionTitle }}</h3>
               <p class="fp-card-copy">
-                Maven Central AAR, SwiftPM binaryTarget, Windows DLL and OpenHarmony HAR all come from the same ijkplayer release.
+                {{ copy.distributionBody }}
               </p>
             </div>
             <div class="fp-package-stack">
@@ -399,15 +317,15 @@ onBeforeUnmount(() => {
     <section class="fp-code-section" aria-labelledby="fp-code-title">
       <div class="fp-container fp-code-layout">
         <div class="fp-code-copy" data-reveal>
-          <p class="fp-eyebrow fp-eyebrow--blue">From first frame to first switch</p>
-          <h2 id="fp-code-title">One API.<br /><em>No forks.</em></h2>
-          <p>Initialize, prepare, inspect tracks, choose one. The platform never leaks into the Dart call site.</p>
+          <p class="fp-eyebrow fp-eyebrow--blue">{{ copy.codeEyebrow }}</p>
+          <h2 id="fp-code-title">{{ copy.codeTitleA }}<br /><em>{{ copy.codeTitleEm }}</em></h2>
+          <p>{{ copy.codeSub }}</p>
           <ol class="fp-steps">
-            <li><span>01</span><p>Create the player and set a source.</p></li>
-            <li><span>02</span><p>Prepare once and read the media metadata.</p></li>
-            <li><span>03</span><p>Select any audio track by stream index.</p></li>
+            <li><span>01</span><p>{{ copy.step1 }}</p></li>
+            <li><span>02</span><p>{{ copy.step2 }}</p></li>
+            <li><span>03</span><p>{{ copy.step3 }}</p></li>
           </ol>
-          <a class="fp-text-link fp-text-link--dark" href="/basic/api">Open the full API →</a>
+          <a class="fp-text-link fp-text-link--dark" :href="isEnglish ? '/en/basic/api' : '/basic/api'">{{ copy.openApi }}</a>
         </div>
 
         <div class="fp-code-card" data-reveal>
@@ -440,12 +358,12 @@ onBeforeUnmount(() => {
         <span data-shape class="fp-shape fp-shape-teal fp-shape--small"></span>
       </div>
       <div class="fp-container fp-cta" data-reveal>
-        <p class="fp-eyebrow">Build for every screen</p>
-        <h2 id="fp-cta-title">Ship it <em>everywhere.</em></h2>
-        <p>Start with one Flutter app. Add a platform when you need it. FPlayer and fplayercore keep the contract.</p>
+        <p class="fp-eyebrow">{{ copy.ctaEyebrow }}</p>
+        <h2 id="fp-cta-title">{{ copy.ctaTitleA }} <em>{{ copy.ctaTitleEm }}</em></h2>
+        <p>{{ copy.ctaSub }}</p>
         <div class="fp-actions">
-          <a class="fp-button fp-button--dark" href="/guide/quick">进入快速上手 <span aria-hidden="true">→</span></a>
-          <a class="fp-button fp-button--ghost" href="/basic/api">查看播放器 API</a>
+          <a class="fp-button fp-button--dark" :href="isEnglish ? '/en/guide/quick' : '/guide/quick'">{{ copy.ctaStart }} <span aria-hidden="true">→</span></a>
+          <a class="fp-button fp-button--ghost" :href="isEnglish ? '/en/basic/api' : '/basic/api'">{{ copy.ctaApi }}</a>
         </div>
         <div class="fp-cta-platforms">
           <span v-for="platform in platforms" :key="platform.id">

@@ -61,6 +61,26 @@ html[data-theme='dark'] .page-title h1 {
   letter-spacing: -0.02em;
 }
 
+.i18n-dropdown .dropdown-title::after {
+  margin-left: 0.35rem;
+  color: currentColor;
+  content: "中 / EN";
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  opacity: 0.72;
+}
+
+html[lang^="en"] .i18n-dropdown .dropdown-title::after {
+  content: "EN / 中";
+}
+
+@media (max-width: 720px) {
+  .i18n-dropdown .dropdown-title::after {
+    display: none;
+  }
+}
+
 main.home {
   max-width: none;
   padding: 0;
