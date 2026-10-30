@@ -40,11 +40,6 @@ body:has(.fp-home) .navbar .nav-links a:hover {
   color: #12c9d6;
 }
 
-body:has(.fp-home) .navbar .logo {
-  filter: grayscale(1) brightness(0) invert(1);
-  opacity: 0.9;
-}
-
 body:has(.fp-home) .footer-wrapper {
   border-top: 1px solid rgba(214, 244, 246, 0.12);
   color: #9bb4b7;
