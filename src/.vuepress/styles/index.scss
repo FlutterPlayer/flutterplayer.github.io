@@ -4,7 +4,7 @@
 main.home {
   max-width: none;
   padding: 0;
-  background: #061012;
+  background: #f4fbfc;
 }
 
 main.home > .hero-info-wrapper {
@@ -18,12 +18,13 @@ main.home .theme-hope-content {
 }
 
 body:has(.fp-home) {
-  background: #061012;
+  color: #082126;
+  background: #f4fbfc;
 }
 
 body:has(.fp-home) .navbar {
-  border-bottom-color: rgba(214, 244, 246, 0.12);
-  background: rgba(6, 16, 18, 0.78);
+  border-bottom-color: rgba(8, 33, 38, 0.12);
+  background: rgba(247, 252, 252, 0.84);
   backdrop-filter: blur(18px);
 }
 
@@ -31,26 +32,63 @@ body:has(.fp-home) .navbar .brand,
 body:has(.fp-home) .navbar .nav-links a,
 body:has(.fp-home) .navbar .site-name,
 body:has(.fp-home) .navbar .toggle-sidebar-button {
-  color: #effafb;
+  color: #082126;
 }
 
 body:has(.fp-home) .navbar .nav-links a.active,
 body:has(.fp-home) .navbar .nav-links a:hover {
-  border-color: #12c9d6;
-  color: #12c9d6;
+  border-color: #087e89;
+  color: #087e89;
 }
 
 body:has(.fp-home) .footer-wrapper {
-  border-top: 1px solid rgba(214, 244, 246, 0.12);
-  color: #9bb4b7;
-  background: #061012;
+  border-top: 1px solid rgba(8, 33, 38, 0.12);
+  color: #547177;
+  background: #f4fbfc;
+}
+
+body:has(.fp-home) .footer-wrapper a {
+  color: #087e89;
 }
 
 body:has(.fp-home) .back-to-top {
   display: none;
 }
 
-body:has(.fp-home) .footer-wrapper a {
+html[data-theme='dark'] main.home {
+  background: #061012;
+}
+
+html[data-theme='dark'] body:has(.fp-home) {
+  color: #effafb;
+  background: #061012;
+}
+
+html[data-theme='dark'] body:has(.fp-home) .navbar {
+  border-bottom-color: rgba(214, 244, 246, 0.12);
+  background: rgba(6, 16, 18, 0.78);
+}
+
+html[data-theme='dark'] body:has(.fp-home) .navbar .brand,
+html[data-theme='dark'] body:has(.fp-home) .navbar .nav-links a,
+html[data-theme='dark'] body:has(.fp-home) .navbar .site-name,
+html[data-theme='dark'] body:has(.fp-home) .navbar .toggle-sidebar-button {
+  color: #effafb;
+}
+
+html[data-theme='dark'] body:has(.fp-home) .navbar .nav-links a.active,
+html[data-theme='dark'] body:has(.fp-home) .navbar .nav-links a:hover {
+  border-color: #12c9d6;
+  color: #12c9d6;
+}
+
+html[data-theme='dark'] body:has(.fp-home) .footer-wrapper {
+  border-top-color: rgba(214, 244, 246, 0.12);
+  color: #9bb4b7;
+  background: #061012;
+}
+
+html[data-theme='dark'] body:has(.fp-home) .footer-wrapper a {
   color: #12c9d6;
 }
 

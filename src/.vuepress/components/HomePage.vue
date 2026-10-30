@@ -16,7 +16,6 @@ interface Platform {
   facts: string[];
   track: string;
   codec: string;
-  accent: string;
 }
 
 const platforms: Platform[] = [
@@ -31,7 +30,6 @@ const platforms: Platform[] = [
     facts: ['NDK 29 与 16 KB 页对齐', 'Texture 纹理输出', '音轨查询与切换'],
     track: 'English · AAC',
     codec: '48 kHz · stereo',
-    accent: '#12c9d6',
   },
   {
     id: 'ios',
@@ -44,7 +42,6 @@ const platforms: Platform[] = [
     facts: ['Device / arm64 simulator', 'VideoToolbox 硬解', 'SwiftPM binaryTarget'],
     track: 'Japanese · AAC',
     codec: '48 kHz · stereo',
-    accent: '#6fe4eb',
   },
   {
     id: 'macos',
@@ -57,7 +54,6 @@ const platforms: Platform[] = [
     facts: ['Metal / CoreVideo', '窗口与全屏适配', '同一套音轨 API'],
     track: 'English · AAC',
     codec: '48 kHz · stereo',
-    accent: '#9af1f4',
   },
   {
     id: 'windows',
@@ -70,7 +66,6 @@ const platforms: Platform[] = [
     facts: ['CMake + fplayercore.dll', '纹理帧回传', '与 Dart API 对齐'],
     track: 'English · AAC',
     codec: '48 kHz · stereo',
-    accent: '#36dbe6',
   },
   {
     id: 'ohos',
@@ -83,7 +78,6 @@ const platforms: Platform[] = [
     facts: ['NAPI / ArkTS 桥接', 'OHOS HAR 分发', '音轨选择可用'],
     track: 'Chinese · AAC',
     codec: '48 kHz · stereo',
-    accent: '#2bb8c5',
   },
 ];
 
@@ -351,7 +345,7 @@ onBeforeUnmount(() => {
               :aria-pressed="activeId === platform.id"
               @click="selectPlatform(platform.id)"
             >
-              <span class="fp-platform-icon" :style="{ color: platform.accent }">
+              <span class="fp-platform-icon">
                 <PlatformGlyph :name="platform.icon" />
               </span>
               <span>
@@ -575,15 +569,23 @@ onBeforeUnmount(() => {
 
 <style scoped>
 .fp-home {
-  --fp-bg: #061012;
-  --fp-surface: #0b1a1d;
-  --fp-surface-raised: #102528;
-  --fp-ink: #effafb;
-  --fp-muted: #9bb4b7;
-  --fp-line: rgba(214, 244, 246, 0.14);
-  --fp-mint: #12c9d6;
-  --fp-cyan: #6fe4eb;
-  --fp-amber: #36dbe6;
+  --fp-bg: #f4fbfc;
+  --fp-surface: #ffffff;
+  --fp-surface-raised: #e8f7f8;
+  --fp-ink: #082126;
+  --fp-muted: #547177;
+  --fp-line: rgba(8, 33, 38, 0.14);
+  --fp-accent: #12c9d6;
+  --fp-mint: #087e89;
+  --fp-cyan: #087e89;
+  --fp-amber: #0b8f9a;
+  --fp-grid-line: rgba(8, 33, 38, 0.075);
+  --fp-hover-surface: rgba(18, 201, 214, 0.08);
+  --fp-glass: rgba(255, 255, 255, 0.8);
+  --fp-glass-strong: rgba(255, 255, 255, 0.94);
+  --fp-glass-shadow: rgba(8, 33, 38, 0.12);
+  --fp-cta-border: rgba(18, 201, 214, 0.3);
+  --fp-cta-bg: linear-gradient(135deg, rgba(231, 249, 250, 0.96), rgba(213, 244, 246, 0.96));
   --fp-display: 'Space Grotesk Variable', 'Space Grotesk', 'Avenir Next', 'PingFang SC', sans-serif;
   --fp-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
   position: relative;
@@ -593,6 +595,26 @@ onBeforeUnmount(() => {
   background: var(--fp-bg);
   font-family: var(--fp-display);
   text-align: left;
+}
+
+html[data-theme='dark'] .fp-home {
+  --fp-bg: #061012;
+  --fp-surface: #0b1a1d;
+  --fp-surface-raised: #102528;
+  --fp-ink: #effafb;
+  --fp-muted: #9bb4b7;
+  --fp-line: rgba(214, 244, 246, 0.14);
+  --fp-accent: #12c9d6;
+  --fp-mint: #12c9d6;
+  --fp-cyan: #6fe4eb;
+  --fp-amber: #36dbe6;
+  --fp-grid-line: rgba(214, 244, 246, 0.055);
+  --fp-hover-surface: rgba(18, 201, 214, 0.08);
+  --fp-glass: rgba(12, 27, 23, 0.78);
+  --fp-glass-strong: rgba(12, 27, 23, 0.9);
+  --fp-glass-shadow: rgba(0, 0, 0, 0.24);
+  --fp-cta-border: rgba(18, 201, 214, 0.22);
+  --fp-cta-bg: linear-gradient(135deg, rgba(17, 37, 31, 0.9), rgba(12, 27, 23, 0.9));
 }
 
 .fp-home *,
@@ -624,8 +646,8 @@ onBeforeUnmount(() => {
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(rgba(214, 244, 246, 0.055) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(214, 244, 246, 0.055) 1px, transparent 1px);
+    linear-gradient(var(--fp-grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--fp-grid-line) 1px, transparent 1px);
   background-size: 72px 72px;
   mask-image: radial-gradient(ellipse 75% 65% at 50% 36%, #000 12%, transparent 78%);
   pointer-events: none;
@@ -679,7 +701,7 @@ onBeforeUnmount(() => {
   width: 0.48rem;
   height: 0.48rem;
   border-radius: 50%;
-  background: var(--fp-mint);
+  background: var(--fp-accent);
   box-shadow: 0 0 0 0 rgba(18, 201, 214, 0.45);
   animation: fp-pulse 2.4s ease-out infinite;
 }
@@ -736,7 +758,7 @@ onBeforeUnmount(() => {
 
 .fp-button--primary {
   color: #041416;
-  background: var(--fp-mint);
+  background: var(--fp-accent);
 }
 
 .fp-text-link {
@@ -818,8 +840,8 @@ onBeforeUnmount(() => {
   inset: 8%;
   border-radius: 50%;
   background:
-    linear-gradient(90deg, transparent 49.8%, rgba(214, 244, 246, 0.08) 50%, transparent 50.2%),
-    linear-gradient(transparent 49.8%, rgba(214, 244, 246, 0.08) 50%, transparent 50.2%);
+    linear-gradient(90deg, transparent 49.8%, var(--fp-grid-line) 50%, transparent 50.2%),
+    linear-gradient(transparent 49.8%, var(--fp-grid-line) 50%, transparent 50.2%);
   pointer-events: none;
 }
 
@@ -835,7 +857,7 @@ onBeforeUnmount(() => {
   border: 1px solid rgba(18, 201, 214, 0.36);
   border-radius: 50%;
   color: var(--fp-mint);
-  background: rgba(12, 27, 23, 0.86);
+  background: var(--fp-glass-strong);
   box-shadow: 0 0 60px rgba(18, 201, 214, 0.12);
   transform: translate(-50%, -50%);
 }
@@ -860,8 +882,8 @@ onBeforeUnmount(() => {
   border: 1px solid var(--fp-line);
   border-radius: 999px;
   color: var(--fp-ink);
-  background: rgba(12, 27, 23, 0.9);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
+  background: var(--fp-glass);
+  box-shadow: 0 10px 30px var(--fp-glass-shadow);
   font-family: var(--fp-mono);
   font-size: 0.64rem;
   white-space: nowrap;
@@ -905,8 +927,8 @@ onBeforeUnmount(() => {
   padding: 0.9rem 1rem;
   border: 1px solid var(--fp-line);
   border-radius: 14px;
-  background: rgba(12, 27, 23, 0.78);
-  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.24);
+  background: var(--fp-glass);
+  box-shadow: 0 18px 45px var(--fp-glass-shadow);
   backdrop-filter: blur(14px);
 }
 
@@ -1079,6 +1101,7 @@ onBeforeUnmount(() => {
   place-items: center;
   border: 1px solid var(--fp-line);
   border-radius: 7px;
+  color: var(--fp-mint);
 }
 
 .fp-platform-icon .platform-glyph {
@@ -1113,6 +1136,12 @@ onBeforeUnmount(() => {
 }
 
 .fp-device {
+  --fp-ink: #effafb;
+  --fp-muted: #9bb4b7;
+  --fp-line: rgba(214, 244, 246, 0.14);
+  --fp-cyan: #6fe4eb;
+  --fp-mint: #12c9d6;
+  --fp-accent: #12c9d6;
   position: relative;
   width: min(100%, 310px);
   aspect-ratio: 0.62;
@@ -1314,7 +1343,7 @@ onBeforeUnmount(() => {
 
 .fp-screen-track.is-selected > i {
   border-color: var(--fp-mint);
-  background: var(--fp-mint);
+  background: var(--fp-accent);
   box-shadow: 0 0 0 3px rgba(18, 201, 214, 0.12);
 }
 
@@ -1581,6 +1610,12 @@ onBeforeUnmount(() => {
 }
 
 .fp-code-panel {
+  --fp-ink: #effafb;
+  --fp-muted: #9bb4b7;
+  --fp-line: rgba(214, 244, 246, 0.14);
+  --fp-cyan: #6fe4eb;
+  --fp-mint: #12c9d6;
+  --fp-accent: #12c9d6;
   min-width: 0;
   overflow: hidden;
   border: 1px solid var(--fp-line);
@@ -1657,11 +1692,11 @@ onBeforeUnmount(() => {
   position: relative;
   overflow: hidden;
   padding: clamp(2rem, 5vw, 4.5rem);
-  border: 1px solid rgba(18, 201, 214, 0.22);
+  border: 1px solid var(--fp-cta-border);
   border-radius: 22px;
   background:
     radial-gradient(circle at 82% 18%, rgba(18, 201, 214, 0.13), transparent 30%),
-    linear-gradient(135deg, rgba(17, 37, 31, 0.9), rgba(12, 27, 23, 0.9));
+    var(--fp-cta-bg);
 }
 
 .fp-cta h2 {
@@ -1719,7 +1754,7 @@ onBeforeUnmount(() => {
 }
 
 .fp-home :focus-visible {
-  outline: 2px solid var(--fp-mint);
+  outline: 2px solid var(--fp-accent);
   outline-offset: 4px;
 }
 
@@ -1753,7 +1788,7 @@ onBeforeUnmount(() => {
 
   .fp-platform-tab:hover {
     border-color: var(--fp-line);
-    background: rgba(17, 37, 31, 0.62);
+    background: var(--fp-hover-surface);
   }
 }
 
