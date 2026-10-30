@@ -8,7 +8,7 @@ title: 播放器API
 ```dart
 FPlayer fplayer = FPlayer();
 ```
-播放器 `fplayer` 创建后，java/objc 层的播放器以及 C 层的播放器也随之一起完成对象创建或 struct 内存分配。终其一生，这个 `fplayer` 就只能对应这一个 C 层的 `FFPlayer`。 并且在使用完成之后， `fplayer`  必须释放其内部 `FFPlayer` 所占用的资源。
+播放器 `fplayer` 创建后，Android/iOS/macOS/Windows/OpenHarmony 各端的原生播放器和 C 层 `fplayercore` 也会完成初始化。它必须通过 `release()` 释放底层资源。
 
 ### release
 ```dart
@@ -25,7 +25,12 @@ release 方法内部会根据当前的播放器状态判断是否需要调用 `s
 
 ### setDataSource
 ```dart
-Future<int> setDataSource(String path, {bool autoPlay = false, bool showCover = false}) async
+Future<void> setDataSource(
+  String path, {
+  Map<String, String?>? headers,
+  bool autoPlay = false,
+  bool showCover = false,
+})
 ```
 ```dart
 /// usage
@@ -108,13 +113,13 @@ fplayer.reset();
 
 ### seekTo  
 ```dart
-Future<void> seekTo() async
+Future<void> seekTo(int msec)
 ```
 ```dart
 // usage
 fplayer.seekTo(3000);
 ```
-控制播放器进行播放进度，参数以毫秒为单位。只能在可播放状态下调用此接口。
+控制播放器播放进度，参数以毫秒为单位，且必须大于等于 0。只能在可播放状态下调用。
 
 **播放器状态控制接口都是 async 异步接口。如果需要连续调用多个播放器控制接口，需要使用 `await` 或者 `Future.then()` 等待异步完成。
 不等待前一个调用完成就直接调用后一个方法可能会出现状态错误问题。**
@@ -124,12 +129,12 @@ fplayer.seekTo(3000);
 
 ### setVolume
 ```dart
-Future<void> setVolume() async
+Future<void> setVolume(double volume)
 ```
 ```dart
 fplayer.setVolume(0.5);
 ```
-音量设置范围在 [0.0, 1.0]，设置超出此范围的音量只效果无法保障。
+音量设置范围在 [0.0, 1.0]，超出范围会返回参数错误。
 
 ### setLoop
 ```dart

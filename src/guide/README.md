@@ -2,138 +2,102 @@
 title: 安装
 ---
 
-fplayer 是 fijkplayer 的 Flutter 封装，是一款支持 Android、iOS、macOS、Windows 和 OpenHarmony 的 Flutter 媒体播放器插件，由 [FlutterPlayer/ijkplayer](https://github.com/FlutterPlayer/ijkplayer) 内核驱动。
-通过纹理（Texture）接入播放器视频渲染到 Flutter 中。
+fplayer 是一款 Flutter 媒体播放器插件，支持 Android、iOS、macOS、Windows 和 OpenHarmony。播放器内核由 [FlutterPlayer/ijkplayer](https://github.com/FlutterPlayer/ijkplayer) 提供，Dart 侧统一使用 `FPlayer` API。
 
-让我们开始使用 fplayer 构建你的 Flutter 音视频应用之旅！  
-别担心，只需要掌握很少的知识你就能完成 Flutter 音视频应用的开发。
+## 环境要求
 
-本节内容包括简洁安装指南以及详细安装指南。
+- Flutter `3.41.9` 或兼容版本
+- Android：JDK 17，Android SDK / NDK（构建预编译内核时不需在本地编译 NDK）
+- iOS / macOS：Xcode，Apple Silicon Mac 可使用 arm64 模拟器
+- Windows：Windows 主机与 Visual Studio C++ 工具链
+- OpenHarmony：DevEco Studio、OpenHarmony SDK 与支持 OHOS 的 Flutter（见 [OpenHarmony 环境](/core/harmonyos-init)）
 
-## 简洁安装指南
+## 添加依赖
 
-在 flutter 项目配置文件 `pubspec.yaml` 中加入 `fplayer` 依赖。最新的稳定版本号见 badge 图标。
+在 `pubspec.yaml` 中添加：
 
 ```yaml
 dependencies:
-  fplayer: ^{latest verison}
+  fplayer: ^1.3.0
 ```
 
-[![pub package](https://img.shields.io/pub/v/fplayer.svg)](https://pub.dartlang.org/packages/fplayer) &nbsp; &nbsp;
+如果需要内置播放器面板、手势和音量/亮度浮层，再添加可选的 `fplayer_ui`：
 
-`{latest verison}` 使用徽标中的版本号代替。
-
-如果需要使用某些尚未发布的功能更新，可以直接依赖对应的 git 分支，方式如下。
-比如这里依赖 develop 分支，
 ```yaml
 dependencies:
-  fplayer:
+  fplayer_ui:
     git:
       url: https://github.com/FlutterPlayer/fplayer.git
-      ref: develop
+      path: packages/fplayer_ui
 ```
 
-## 详细安装步骤
+然后执行：
 
-如果你熟悉 Flutter App 的依赖安装，看上面 “简洁安装指南” 就够了，本页后续内容完全可以跳过。
-
-
-如果你不太熟悉 Flutter App 开发流程，看到了这这一部分内容，我们还是假定你已经在你的设备上配置好了 Flutter 的开发环境。即你可以在命令行输入 `flutter` 命令，并且有相应的正确输出内容。
-
-
-### 新建 Flutter App 项目
-
-
-终端输入以下命令，新建一个名为 `playerapp` 的 Flutter App 项目。
-```
-$ flutter create -t app playerapp
-```
-命令运行结束后，Flutter 会给我们如下提示。
-```
-In order to run your application, type:
-
-  $ cd playerapp
-  $ flutter run
-
-Your application code is in playerapp/lib/main.dart.
+```bash
+flutter pub get
 ```
 
+`fplayer_ui` 目前随 fplayer 仓库一起发布，不在 pub.dev 单独发布；依赖 `fplayer` 核心包仍然可以直接使用。
 
-连接上手机设备（或者打开 Android 模拟器），并且使用 `flutter doctor` 命令检查设备是否连接成功。
+## 各平台准备
 
+### Android
 
-```
-$ flutter doctor
-Doctor summary (to see all details, run flutter doctor -v):
-[✓] Flutter (Channel stable, v1.7.8+hotfix.4, on Mac OS X 10.14.3 18D109, locale zh-Hans-CN)
+Android 消费 Maven Central 或 `android/local-repo` 中的 `fplayercore` AAR。首次构建前可以运行：
 
-[✓] Android toolchain - develop for Android devices (Android SDK version 28.0.3)
-[✓] Xcode - develop for iOS and macOS (Xcode 10.3)
-[✓] iOS tools - develop for iOS devices
-[✓] Android Studio (version 3.4)
-[✓] IntelliJ IDEA Ultimate Edition (version 2019.1.2)
-[✓] VS Code (version 1.36.1)
-[✓] Connected device (1 available)
-
-• No issues found!
+```bash
+./tool/fetch_ijkplayer_packages.sh
 ```
 
-在 `flutter doctor` 命令的输出中，至少应该含有 `[✓] Connected device (1 available)`
+如果 Gradle 无法解析 `io.github.flutterplayer:fplayercore`，先确认上述 fetch 脚本已执行，并检查 `android/local-repo`。
 
+### iOS / macOS
 
-### 安装 fplayer 依赖
-
-进入上一步中创建的目录 playerapp 中，编辑其中的文件 `pubspec.yaml` ，增加依赖 `fplayer: ^{latest verison}`
-
-```diff
-dependencies:
-  flutter:
-    sdk: flutter
-    
-+ fplayer: ^{latest verison}
-```
-
-[![pub package](https://img.shields.io/pub/v/fplayer.svg)](https://pub.dartlang.org/packages/fplayer) &nbsp; &nbsp;
-
-`{latest verison}` 使用徽标中的版本号代替。
-
-然后在 playerapp 目录中运行如下命令安装依赖，等待命令成功完成。
-
-```
-$ flutter pub get --verbose
-```
-
-
-### 验证依赖安装
-
-安装完 fplayer 之后我们先验证一下，确保安装正确。
-
-编辑 `lib/main.dart` 文件，在开头加入如下行，引入 fplayer。
-```dart
-import 'package:fplayer/fplayer.dart';
-```
-
-iOS/macOS 默认使用 Swift Package Manager。首次构建前启用 SPM：
+fplayer 使用 Swift Package Manager 从 ijkplayer 官方 Release 下载 `fplayercore` xcframework。首次构建前启用 SPM：
 
 ```bash
 flutter config --enable-swift-package-manager
 ```
 
-然后分别编译各平台项目，确保 build 成功：
+新项目不需要 Podfile，也不需要执行 `pod install`。仍然使用 CocoaPods 的旧项目可以继续使用 podspec，并通过 fetch 脚本取得 `Frameworks/` 中的本地 framework。
+
+iOS 模拟器使用 arm64 切片，建议在 Apple Silicon Mac 上构建。
+
+### Windows
+
+Windows 示例需要在 Windows 主机上构建，并确保 Visual Studio 的 C++ 桌面开发工具已安装。fplayer 会通过 CMake 链接 `fplayercore.dll`。
+
+### OpenHarmony
+
+OpenHarmony 需要单独的 Flutter OHOS 发行版和 DevEco 工具链。完整步骤见 [OpenHarmony 环境搭建](/core/harmonyos-init)。
+
+## 构建
 
 ```bash
+# Android
 flutter build apk
+
+# iOS 模拟器（Apple Silicon）
 flutter build ios --simulator --no-codesign
+
+# macOS
 flutter build macos
+
+# Windows（必须在 Windows 主机执行）
 flutter build windows
 ```
 
-#### **注意事项**
-* fplayer 中使用了 androidx 的 support 库，在 app 中需要启用 androidx
-* 如果 build apk 时太久时间没有输出，可以先在 android 目录运行 `./gradlew` 检查 gradle 环境是否正确。
-* iOS/macOS 构建会通过 Swift Package Manager 从 ijkplayer 的官方 GitHub Release 下载 xcframework，网络较慢时请耐心等待。
-* iOS 模拟器使用 arm64 切片，请使用 Apple Silicon Mac 的模拟器。
-* 仍然使用 CocoaPods 的项目可以通过 podspec 使用 fetch 到 `Frameworks/` 的 framework；新项目推荐直接使用 Swift Package Manager。
-* ios 可调试环境：Flutter 3.41.9、Xcode 16+
+构建前建议先运行：
 
-Flutter 中安装 fplayer 的内容到这里就结束了，有任何问题请在 [github issues](https://github.com/FlutterPlayer/fplayer/issues) 中进行提问。
+```bash
+flutter clean
+flutter pub get
+```
+
+## 下一步
+
+- [快速上手](/guide/quick)：创建播放器并接入 `FView`
+- [播放器 API](/basic/api)：播放控制、音轨和状态接口
+- [内置 UI](/skin/immanent)：使用 `fplayer_ui` 的完整面板
+
+如果遇到问题，请在 [fplayer issues](https://github.com/FlutterPlayer/fplayer/issues) 中反馈。

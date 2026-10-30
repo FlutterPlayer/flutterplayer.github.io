@@ -7,7 +7,7 @@ title: ffmpeg参数相关
 设置播放器的属性属于高级用法。  
 这里介绍设置属性的方法，以及和播放器相关的主要属性。
 
-设置属性方法同时可用于设置 ffmpeg 属性， 比如 avcodec avformat avresmple 相关属性等，这里的文档无法提供全部内容。更多关于 ffmpeg 的属性请去阅读 ffmpeg 文档，或者去搜索引擎查找资料。
+设置属性方法同时可用于设置 ffmpeg 属性， 比如 avcodec、avformat、swresample 相关属性等，这里的文档无法提供全部内容。更多关于 ffmpeg 的属性请阅读 [FFmpeg 官方文档](https://ffmpeg.org/documentation.html)。
 
 
 设置播放器属性需要在调用 `prepareAsync()` 之前，否则设置仅被保存下来，但不会应用到相应使用此属性值的执行逻辑中。

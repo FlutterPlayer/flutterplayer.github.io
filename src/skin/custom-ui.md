@@ -1,11 +1,10 @@
 ---
 title: 自定义UI
---- 
+---
 
-上一节我们讲了fplayer的内置UI，虽然说有大部分播放器有的功能，但是也很难满足一些需求，这样就需要自定义UI来满足这些需求，这节主要介绍如何自定义UI并使用
+`FView` 的 `panelBuilder` 用来决定视频区域上层的控件。使用 `fplayer` 核心包时默认是最小面板；需要完整播放器 UI 时可以先参考[内置 UI](/skin/immanent)，或者完全自己实现。
 
-## 替换皮肤
-首先介绍下FView构造函数中的参数，替换皮肤就需要修改里面的panelBuilder函数。
+## FView 参数
 
 ```dart
 typedef FPanelWidgetBuilder = Widget Function(
@@ -13,60 +12,59 @@ typedef FPanelWidgetBuilder = Widget Function(
   FData data,
   BuildContext context,
   Size viewSize,
-  Rect texturePos, 
+  Rect texturePos,
 );
 
 FView({
-  @required FPlayer player,
-  double width,
-  double height,
-  Color color = Colors.blueGrey,
-  FFit fsFit = FFit.contain,
+  Key? key,
+  required FPlayer player,
+  double? width,
+  double? height,
   FFit fit = FFit.contain,
-  ImageProvider cover,
-  FPanelWidgetBuilder panelBuilder,
+  FFit fsFit = FFit.contain,
+  FPanelWidgetBuilder panelBuilder = minimalFPanelBuilder,
+  Color color = const Color(0xFF607D8B),
+  ImageProvider? cover,
+  bool fs = true,
   void Function(FData)? onDispose,
-}) 
+});
 ```
 
-* `player`： 播放器 FPlayer 对象，FView 所显示视频的数据来源，自定义UI所控制的播放器对象。  
-  监听此 player 的属性变化并在 UI 上作出相应的改变。
-* `data`： 播放器在全屏模式和非全屏模式切换时，panel 会销毁并重新初始化，如果要在全屏模式和非全屏模式的 panel 中共享一些数据，可以把数据保存在 FData 中。
-* `context`： build Widget 的上下文。
-* `viewSize`： 对应 FView 的实际显示大小
-* `texturePos`： FView 中实际视频显示的相对位置，这个相对位置可能超出 `FView` 的实际大小
+- `player`：当前 `FPlayer`，面板监听它的 `FValue` 变化。
+- `data`：全屏和非全屏面板共享的数据容器；面板销毁后数据仍可保留。
+- `viewSize`：`FView` 的实际显示尺寸。
+- `texturePos`：视频纹理在 `FView` 中的位置，可能超出 `FView` 边界。
+- `onDispose`：`FView` 销毁时恢复系统设置或清理面板状态。
 
-如果在 panel 控制中修改了一些系统参数，可以记录到 FData 中，等 FView 销毁时，在 FView 的 `onDispose` 回掉函数中恢复系统默认值。
+`FFit.contain`、`FFit.fill`、`FFit.cover` 分别控制视频在目标区域内的填充方式；全屏使用 `fsFit`，普通模式使用 `fit`。
 
-* `FFit.contain`：`texturePos` 是绝对不会超出 `viewSize` 的大小。
-* `FFit.fill`：`texturePos` 的宽高肯定是和 `viewSize` 的宽高相等，`texturePos` 的相对偏移是 0。
-* `FFit.cover`：且 FView 宽高比例和实际视频宽高比例不等的情况下，`texturePos` 宽高肯定超出 `viewSize` 的大小。
+## 自定义面板示例
 
-## demo
-利用上面描述的自定义播放器控制 UI 的接口，我们实际编码实现一个非常简单的 UI。
-UI 描述： 在视频显示区域的左下角根据实际播放器状态显示一个播放、暂停按钮。
+下面的面板只在视频左下角显示一个播放/暂停按钮：
 
 ```dart
-class CustomFPanel extends StatefulWidget {
+import 'dart:math';
+
+import 'package:fplayer/fplayer.dart';
+import 'package:flutter/material.dart';
+
+class CustomPanel extends StatefulWidget {
+  const CustomPanel({
+    super.key,
+    required this.player,
+    required this.viewSize,
+    required this.texturePos,
+  });
+
   final FPlayer player;
-  final BuildContext buildContext;
   final Size viewSize;
   final Rect texturePos;
 
-  const CustomFPanel({
-    @required this.player,
-    this.buildContext,
-    this.viewSize,
-    this.texturePos,
-  });
-
   @override
-  _CustomFPanelState createState() => _CustomFPanelState();
+  State<CustomPanel> createState() => _CustomPanelState();
 }
 
-class _CustomFPanelState extends State<CustomFPanel> {
-
-  FPlayer get player => widget.player;
+class _CustomPanelState extends State<CustomPanel> {
   bool _playing = false;
 
   @override
@@ -76,33 +74,28 @@ class _CustomFPanelState extends State<CustomFPanel> {
   }
 
   void _playerValueChanged() {
-    FValue value = player.value;
-
-    bool playing = (value.state == FState.started);
+    final playing = widget.player.state == FState.started;
     if (playing != _playing) {
-      setState(() {
-        _playing = playing;
-      });
+      setState(() => _playing = playing);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    Rect rect = Rect.fromLTRB(
+    final rect = Rect.fromLTRB(
       max(0.0, widget.texturePos.left),
       max(0.0, widget.texturePos.top),
       min(widget.viewSize.width, widget.texturePos.right),
       min(widget.viewSize.height, widget.texturePos.bottom),
     );
+
     return Positioned.fromRect(
       rect: rect,
-      child: Container(
+      child: Align(
         alignment: Alignment.bottomLeft,
         child: IconButton(
-          icon: Icon(
-            _playing ? Icons.pause : Icons.play_arrow,
-            color: Colors.white,
-          ),
+          color: Colors.white,
+          icon: Icon(_playing ? Icons.pause : Icons.play_arrow),
           onPressed: () {
             _playing ? widget.player.pause() : widget.player.start();
           },
@@ -113,13 +106,13 @@ class _CustomFPanelState extends State<CustomFPanel> {
 
   @override
   void dispose() {
+    widget.player.removeListener(_playerValueChanged);
     super.dispose();
-    player.removeListener(_playerValueChanged);
   }
 }
 ```
 
-然后作为 panelBuilder 参数传递给 FView 的构造函数。这样一个简单的自定义皮肤就完成了。
+传给 `FView`：
 
 ```dart
 FView(
@@ -131,12 +124,18 @@ FView(
     Size viewSize,
     Rect texturePos,
   ) {
-    return CustomFPanel(
+    return CustomPanel(
       player: player,
-      buildContext: context,
       viewSize: viewSize,
       texturePos: texturePos,
     );
   },
 )
 ```
+
+## 注意事项
+
+- 面板通过 `player.addListener` 监听状态，销毁时必须移除监听。
+- 全屏切换会重建面板，需要跨全屏保留的数据放入 `FData`。
+- 控制播放器时使用 `await`，避免在初始化或 `asyncPreparing` 状态调用 `start`、`pause`。
+- 需要完整的手势和设置面板时，优先使用 [`fplayer_ui`](/skin/immanent)，不要重复实现播放器状态机。

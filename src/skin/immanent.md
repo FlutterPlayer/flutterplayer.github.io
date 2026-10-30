@@ -2,17 +2,33 @@
 title: 内置UI
 ---
 
-fplayer除了默认皮肤外，还提供了高级皮肤，本节是对默认皮肤和高级皮肤的介绍。
+`fplayer` 核心包自带一个最小面板 `minimalFPanelBuilder`。更完整的播放条、手势和设置面板在可选的 `fplayer_ui` 包中提供：
+
+```yaml
+dependencies:
+  fplayer: ^1.3.0
+  fplayer_ui:
+    git:
+      url: https://github.com/FlutterPlayer/fplayer.git
+      path: packages/fplayer_ui
+```
+
+```dart
+import 'package:fplayer/fplayer.dart';
+import 'package:fplayer_ui/fplayer_ui.dart';
+```
+
+`fplayer_ui` 不在 pub.dev 单独发布；它随 fplayer 仓库一起维护。
 
 ## 默认皮肤
-默认UI主要实现了一个播放器最基础的能力。
+`fplayer_ui` 的默认面板实现了一个播放器最基础的能力。
 
 用法如下:
 
 ```dart
 FView(
   player: player,
-  panelBuilder: defaultFPanelBuilder, // 可省略
+  panelBuilder: defaultFPanelBuilder,
 )
 ```
 
@@ -21,7 +37,7 @@ FView(
 <img src="/assets/images/default-ui.jpg" style="max-height: 300px"/>
 
 ## 高级皮肤
-高级皮肤是对默认UI的扩展，提供了一个更高级的panel builder函数，手势包括，主要分为四个部分（单视频模式、多视频模式、功能介绍以及API）。
+高级皮肤是对默认 UI 的扩展，提供播放条、手势、设置面板等能力。使用前需要完成上面的 `fplayer_ui` 依赖和导入。
 
 ### 单视频模式配置
 只需要播放一个视频时的配置
@@ -348,18 +364,18 @@ fPanelBuilder(
 
 属性
 
-| 属性名             | 类型      | 描述                          |
-|-----------------|---------|-----------------------------|
-| title           | String  | 单视频模式视频标题                   |
-| subTitle        | String  | 单视频模式视频副标题                  |
-| isSnapShot      | bool    | 是否显示截图按钮，默认为false           |
-| isRightButton   | bool    | 是否显示全屏模式中间区域右上方按钮组，默认为false |
-| rightButtonList | List    | 全屏模式中间区域右上方按钮组，建议不超过三个      |
-| isVideos        | bool    | 是否为多视频模式，默认为false           |
-| videoList       | List    | 多视频列表                       |
-| speedList       | List    | 倍速列表                        |
-| isResolution    | bool    | 是否显示清晰度按钮，默认为false          |
-| resolutionList  | List    | 清晰度列表                       |
+| 属性名             | 类型                         | 描述                          |
+|-----------------|----------------------------|-----------------------------|
+| title           | `String`                   | 单视频模式视频标题                   |
+| subTitle        | `String`                   | 单视频模式视频副标题                  |
+| isSnapShot      | `bool`                     | 是否显示截图按钮，默认为 false          |
+| isRightButton   | `bool`                     | 是否显示全屏模式中间区域右上方按钮组，默认为 false |
+| rightButtonList | `List<Widget>?`            | 全屏模式中间区域右上方按钮组，建议不超过三个      |
+| isVideos        | `bool`                     | 是否为多视频模式，默认为 false           |
+| videoList       | `List<VideoItem>?`         | 多视频列表                       |
+| speedList       | `Map<String, double>?`     | 倍速列表；必须包含 1.0 倍速            |
+| isResolution    | `bool`                     | 是否显示清晰度按钮，默认为 false          |
+| resolutionList  | `Map<String, ResolutionItem>?` | 清晰度列表                       |
 
 方法
 

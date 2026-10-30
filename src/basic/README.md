@@ -15,7 +15,7 @@ Android 内核 AAR 发布在 Maven Central；iOS/macOS xcframework、Windows DLL
 [点击此处](/basic/api)可以查看播放器提供API函数以及如何正确的使用的示例，包括音轨查询与切换。
 
 ## 内置UI
-[点击此处](/basic/immanent)可以查看播放器提供内置UI以及如何正确的使用的示例
+[点击此处](/skin/immanent)可以查看 fplayer_ui 提供的默认面板、手势和高级配置。
 
 ## ffmpeg参数设置
 [点击此处](/basic/ffmpeg)可以配置一些高级的FFmpeg的内置参数可以用作调整播放器的一些参数
