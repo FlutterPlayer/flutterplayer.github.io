@@ -1,1 +1,0 @@
-import{a2 as o,P as n,Q as t,U as c,C as a}from"./framework-bff6e1a8.js";const r={};function s(_,l){const e=a("HomePage");return n(),t("div",null,[c(e)])}const d=o(r,[["render",s],["__file","index.html.vue"]]);export{d as default};
