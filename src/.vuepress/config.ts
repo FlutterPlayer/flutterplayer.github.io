@@ -5,6 +5,19 @@ import theme from "./theme.js";
 export default defineUserConfig({
   head: [
     [
+      "meta",
+      {
+        name: "theme-color",
+        content: "#fafafa",
+        media: "(prefers-color-scheme: light)",
+      },
+    ],
+    [
+      "script",
+      {},
+      `(() => { if (document.querySelector('meta[name="theme-color"][media*="dark"]')) return; const meta = document.createElement("meta"); meta.name = "theme-color"; meta.content = "#0d0d0f"; meta.media = "(prefers-color-scheme: dark)"; document.head.appendChild(meta); })();`,
+    ],
+    [
       "script",
       {
         "data-ad-client": "ca-pub-5039983089268679",

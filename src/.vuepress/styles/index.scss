@@ -1,4 +1,20 @@
-// Booleans-inspired documentation chrome.
+// Booleans design tokens, shared by the docs chrome and the homepage.
+:root {
+  // Brand blue: #1e7fff is kept for large display text and decorative shapes.
+  --fp-blue: #1e7fff;
+  // Brand blue dark enough for normal-size text on light surfaces (5.7:1 on #fafafa).
+  --fp-blue-text: #0d5bd8;
+  // Fill behind white button text (6:1); it stays dark in both themes.
+  --fp-blue-fill: #0d5bd8;
+  // Status green for normal-size metadata on light surfaces (5.2:1 on #fafafa).
+  --fp-green-text: #0f7a45;
+}
+
+html[data-theme='dark'] {
+  // On dark surfaces the brand blue itself already clears 4.5:1.
+  --fp-blue-text: #1e7fff;
+  --fp-green-text: #2cc26e;
+}
 
 body {
   color: #1a1a1a;
@@ -50,7 +66,7 @@ html[data-theme='dark'] .page-title h1 {
 }
 
 .theme-hope-content a {
-  color: #1e7fff;
+  color: var(--fp-blue-text);
 }
 
 .navbar .site-name {
@@ -126,7 +142,7 @@ body:has(.fp-home) .navbar .site-name {
 body:has(.fp-home) .navbar .nav-links a.active,
 body:has(.fp-home) .navbar .nav-links a:hover {
   border-color: #1e7fff;
-  color: #1e7fff;
+  color: var(--fp-blue-text);
 }
 
 body:has(.fp-home) .footer-wrapper {
@@ -136,7 +152,7 @@ body:has(.fp-home) .footer-wrapper {
 }
 
 body:has(.fp-home) .footer-wrapper a {
-  color: #1e7fff;
+  color: var(--fp-blue-text);
 }
 
 body:has(.fp-home) .back-to-top {

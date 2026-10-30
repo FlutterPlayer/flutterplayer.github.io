@@ -127,7 +127,7 @@ onBeforeUnmount(() => {
           <a class="fp-button fp-button--blue" :href="isEnglish ? '/en/guide/quick' : '/guide/quick'">{{ copy.start }} <span aria-hidden="true">→</span></a>
           <a class="fp-button fp-button--ghost-dark" :href="isEnglish ? '/en/basic/api' : '/basic/api'">{{ copy.api }}</a>
         </div>
-        <div class="fp-hero-chips" data-hero :aria-label="copy.platformsAria">
+        <div class="fp-hero-chips" data-hero role="group" :aria-label="copy.platformsAria">
           <span v-for="platform in platforms" :key="platform.id">
             <i :style="{ background: platform.color }"></i>
             {{ platform.name }}
@@ -194,7 +194,7 @@ onBeforeUnmount(() => {
               </button>
             </div>
 
-            <div class="fp-chip-row" :aria-label="copy.callChain">
+            <div class="fp-chip-row" role="group" :aria-label="copy.callChain">
               <span>Dart FPlayer</span>
               <b>→</b>
               <span>MethodChannel / NAPI</span>
@@ -206,6 +206,7 @@ onBeforeUnmount(() => {
           <div ref="platformStage" class="fp-preview-wrap">
             <div
               class="fp-preview"
+              aria-hidden="true"
               :class="['fp-preview--' + active.kind, { 'is-software': !hardwareOn }]"
               :style="{ '--platform-color': active.color }"
             >
@@ -378,6 +379,9 @@ onBeforeUnmount(() => {
 <style scoped>
 .fp-home {
   --fp-blue: #1e7fff;
+  /* Normal-size brand text and white-on-blue fills use --fp-blue-text /
+     --fp-blue-fill, and status text uses --fp-green-text; all three are
+     declared in styles/index.scss. */
   --fp-yellow: #f5c842;
   --fp-red: #ff4545;
   --fp-teal: #2ecaad;
@@ -388,7 +392,7 @@ onBeforeUnmount(() => {
   --fp-card: #ffffff;
   --fp-ink: #1a1a1a;
   --fp-muted: #666666;
-  --fp-faint: #888888;
+  --fp-faint: #6f6f6f;
   --fp-border: rgba(0, 0, 0, 0.08);
   --fp-border-strong: rgba(0, 0, 0, 0.15);
   --fp-serif: 'Instrument Serif', Georgia, serif;
@@ -410,7 +414,7 @@ html[data-theme='dark'] .fp-home {
   --fp-card: #141417;
   --fp-ink: #ffffff;
   --fp-muted: rgba(255, 255, 255, 0.65);
-  --fp-faint: rgba(255, 255, 255, 0.45);
+  --fp-faint: rgba(255, 255, 255, 0.5);
   --fp-border: rgba(255, 255, 255, 0.07);
   --fp-border-strong: rgba(255, 255, 255, 0.16);
 }
@@ -544,7 +548,7 @@ html[data-theme='dark'] .fp-home .fp-button--dark {
   align-items: center;
   gap: 0.55rem;
   margin: 0 0 1.5rem;
-  color: var(--fp-blue);
+  color: var(--fp-blue-text);
   font-family: var(--fp-sans);
   font-size: 0.75rem;
   font-weight: 600;
@@ -563,6 +567,7 @@ html[data-theme='dark'] .fp-home .fp-button--dark {
   white-space: nowrap;
 }
 
+/* Sits on the dark code section, where the brand blue already clears 4.5:1. */
 .fp-eyebrow--blue {
   color: var(--fp-blue);
 }
@@ -586,6 +591,8 @@ html[data-theme='dark'] .fp-home .fp-button--dark {
   font-weight: 400;
   letter-spacing: -0.03em;
   line-height: 0.82;
+  text-wrap: wrap;
+  text-wrap: balance;
 }
 
 .fp-hero h1 span {
@@ -625,12 +632,13 @@ html[data-theme='dark'] .fp-home .fp-button--dark {
   font-size: 0.95rem;
   font-weight: 600;
   line-height: 1;
+  touch-action: manipulation;
   transition: transform 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
 }
 
 .fp-home .fp-button--blue {
   color: #ffffff;
-  background: var(--fp-blue);
+  background: var(--fp-blue-fill);
 }
 
 .fp-home .fp-button--dark {
@@ -693,7 +701,7 @@ html[data-theme='dark'] .fp-home .fp-button--dark {
   justify-content: space-between;
   width: min(1200px, calc(100% - 80px));
   margin: 0 auto;
-  color: rgba(255, 255, 255, 0.36);
+  color: rgba(255, 255, 255, 0.5);
   font-family: var(--fp-mono);
   font-size: 0.68rem;
 }
@@ -721,6 +729,8 @@ html[data-theme='dark'] .fp-home .fp-button--dark {
   font-weight: 700;
   letter-spacing: -0.02em;
   line-height: 1.1;
+  text-wrap: wrap;
+  text-wrap: balance;
 }
 
 .fp-section-head > p:last-child,
@@ -755,7 +765,7 @@ html[data-theme='dark'] .fp-home .fp-button--dark {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  color: var(--fp-green);
+  color: var(--fp-green-text);
   font-family: var(--fp-mono);
   font-size: 0.72rem;
   font-weight: 500;
@@ -779,8 +789,10 @@ html[data-theme='dark'] .fp-home .fp-button--dark {
   padding: 0;
   border: 0;
   border-radius: 99px;
-  background: #e0e0e0;
+  /* 3.9:1 against a white card, so the off state keeps a visible boundary. */
+  background: #808080;
   cursor: pointer;
+  touch-action: manipulation;
   transition: background-color 0.3s ease;
 }
 
@@ -842,6 +854,7 @@ html[data-theme='dark'] .fp-home .fp-button--dark {
   font-family: var(--fp-sans);
   text-align: left;
   cursor: pointer;
+  touch-action: manipulation;
   transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 
@@ -926,7 +939,7 @@ html[data-theme='dark'] .fp-home .fp-button--dark {
 }
 
 .fp-chip-row b {
-  color: var(--fp-blue);
+  color: var(--fp-blue-text);
   font-weight: 400;
 }
 
@@ -947,7 +960,7 @@ html[data-theme='dark'] .fp-home .fp-button--dark {
   border-radius: 28px;
   background: #0d0d0f;
   box-shadow: 0 16px 56px rgba(0, 0, 0, 0.18);
-  transition: filter 0.4s ease, opacity 0.4s ease;
+  transition: opacity 0.4s ease;
 }
 
 .fp-preview--desktop {
@@ -1171,7 +1184,7 @@ html[data-theme='dark'] .fp-home .fp-button--dark {
 
 .fp-card-eyebrow {
   margin: 0 0 0.75rem;
-  color: var(--fp-blue);
+  color: var(--fp-blue-text);
   font-family: var(--fp-mono);
   font-size: 0.68rem;
   font-weight: 500;
@@ -1186,6 +1199,8 @@ html[data-theme='dark'] .fp-home .fp-button--dark {
   font-weight: 700;
   letter-spacing: -0.025em;
   line-height: 1.15;
+  text-wrap: wrap;
+  text-wrap: balance;
 }
 
 .fp-card-copy {
@@ -1260,7 +1275,7 @@ html[data-theme='dark'] .fp-home .fp-button--dark {
 
 .fp-track-widget-row b {
   margin-left: auto;
-  color: var(--fp-blue);
+  color: var(--fp-blue-text);
   font-size: 0.55rem;
   font-weight: 500;
 }
@@ -1327,7 +1342,7 @@ html[data-theme='dark'] .fp-home .fp-button--dark {
 }
 
 .fp-package-stack b {
-  color: var(--fp-blue);
+  color: var(--fp-blue-text);
   font-family: var(--fp-mono);
   font-size: 0.68rem;
   font-weight: 500;
@@ -1396,7 +1411,7 @@ html[data-theme='dark'] .fp-home .fp-button--dark {
 }
 
 .fp-text-link {
-  color: var(--fp-blue);
+  color: var(--fp-blue-text);
   font-family: var(--fp-sans);
   font-size: 0.9rem;
   font-weight: 600;
@@ -1423,7 +1438,7 @@ html[data-theme='dark'] .fp-home .fp-button--dark {
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  color: rgba(255, 255, 255, 0.4);
+  color: rgba(255, 255, 255, 0.55);
   font-family: var(--fp-mono);
   font-size: 0.62rem;
 }
@@ -1464,7 +1479,7 @@ html[data-theme='dark'] .fp-home .fp-button--dark {
 }
 
 .fp-c-comment {
-  color: #666b78;
+  color: #848b98;
 }
 
 .fp-c-keyword {
@@ -1587,7 +1602,7 @@ html[data-theme='dark'] .fp-home .fp-button--dark {
   }
 
   .fp-button--blue:hover {
-    background: #0d6de8;
+    background: #0a4bb8;
   }
 
   .fp-button--dark:hover {

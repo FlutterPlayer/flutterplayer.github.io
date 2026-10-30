@@ -35,7 +35,7 @@ FView(
 
 Screenshot:
 
-<img src="/assets/images/default-ui.jpg" style="max-height: 300px"/>
+<img src="/assets/images/default-ui.jpg" alt="Screenshot of the default FPlayer panel: a landscape video frame with the progress bar on the left" width="1920" height="864" style="width: 100%; max-width: 667px; height: auto; object-fit: contain" />
 
 ## Advanced skin
 
@@ -86,8 +86,8 @@ Screenshots:
   </thead>
   <tbody>
     <tr>
-      <td><img style="max-width: 200px" src="/assets/images/video-ui-vertical.jpg" alt="Single video inline mode demo screenshot" /></td>
-      <td><img style="max-height: 300px" src="/assets/images/video-ui-horizontal.jpg" alt="Single video fullscreen mode demo screenshot" /></td>
+      <td><img style="width: 200px; height: auto; max-width: 100%; object-fit: contain" src="/assets/images/video-ui-vertical.jpg" alt="Single video inline mode demo screenshot" width="864" height="1920" /></td>
+      <td><img style="width: 100%; max-width: 667px; height: auto; object-fit: contain" src="/assets/images/video-ui-horizontal.jpg" alt="Single video fullscreen mode demo screenshot" width="1920" height="864" /></td>
     </tr>
   </tbody>
 </table>
@@ -249,8 +249,8 @@ Screenshots:
   </thead>
   <tbody>
     <tr>
-      <td><img style="max-width: 200px" src="/assets/images/videos-ui-vertical.jpg" alt="Multi video inline mode demo screenshot" /></td>
-      <td><img style="max-height: 300px" src="/assets/images/videos-ui-horizontal.jpg" alt="Multi video fullscreen mode demo screenshot" /></td>
+      <td><img style="width: 200px; height: auto; max-width: 100%; object-fit: contain" src="/assets/images/videos-ui-vertical.jpg" alt="Multi video inline mode demo screenshot" width="864" height="1920" /></td>
+      <td><img style="width: 100%; max-width: 667px; height: auto; object-fit: contain" src="/assets/images/videos-ui-horizontal.jpg" alt="Multi video fullscreen mode demo screenshot" width="1920" height="864" /></td>
     </tr>
   </tbody>
 </table>
@@ -361,7 +361,7 @@ fPanelBuilder(
 
 Screenshot:
 
-<img src="/assets/images/videos-ui-all.jpg" style="max-height: 300px" />
+<img src="/assets/images/videos-ui-all.jpg" alt="Screenshot of the advanced FPlayer skin: a landscape video with the bottom playback bar and side action buttons" width="960" height="432" style="width: 100%; max-width: 667px; height: auto; object-fit: contain" />
 
 ### API
 

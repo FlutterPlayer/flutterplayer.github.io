@@ -34,7 +34,7 @@ FView(
 
 运行截图:
 
-<img src="/assets/images/default-ui.jpg" style="max-height: 300px"/>
+<img src="/assets/images/default-ui.jpg" alt="FPlayer 默认面板截图：横屏视频画面，左侧为播放进度条" width="1920" height="864" style="width: 100%; max-width: 667px; height: auto; object-fit: contain" />
 
 ## 高级皮肤
 高级皮肤是对默认 UI 的扩展，提供播放条、手势、设置面板等能力。使用前需要完成上面的 `fplayer_ui` 依赖和导入。
@@ -83,8 +83,8 @@ FView(
   </thead>
   <tbody>
     <tr>
-      <td><img style="max-width: 200px" src="/assets/images/video-ui-vertical.jpg" alt="单视频 小屏模式 demo 运行截图" /></td>
-      <td><img style="max-height: 300px" src="/assets/images/video-ui-horizontal.jpg" alt="单视频 全屏模式 demo 运行截图" /></td>
+      <td><img style="width: 200px; height: auto; max-width: 100%; object-fit: contain" src="/assets/images/video-ui-vertical.jpg" alt="单视频 小屏模式 demo 运行截图" width="864" height="1920" /></td>
+      <td><img style="width: 100%; max-width: 667px; height: auto; object-fit: contain" src="/assets/images/video-ui-horizontal.jpg" alt="单视频 全屏模式 demo 运行截图" width="1920" height="864" /></td>
     </tr>
   </tbody>
 </table>
@@ -247,8 +247,8 @@ Column(
   </thead>
   <tbody>
     <tr>
-      <td><img style="max-width: 200px" src="/assets/images/videos-ui-vertical.jpg" alt="多视频 小屏模式 demo 运行截图" /></td>
-      <td><img style="max-height: 300px" src="/assets/images/videos-ui-horizontal.jpg" alt="多视频 全屏模式 demo 运行截图" /></td>
+      <td><img style="width: 200px; height: auto; max-width: 100%; object-fit: contain" src="/assets/images/videos-ui-vertical.jpg" alt="多视频 小屏模式 demo 运行截图" width="864" height="1920" /></td>
+      <td><img style="width: 100%; max-width: 667px; height: auto; object-fit: contain" src="/assets/images/videos-ui-horizontal.jpg" alt="多视频 全屏模式 demo 运行截图" width="1920" height="864" /></td>
     </tr>
   </tbody>
 </table>
@@ -358,7 +358,7 @@ fPanelBuilder(
 
 运行截图:
 
-<img src="/assets/images/videos-ui-all.jpg" style="max-height: 300px" />
+<img src="/assets/images/videos-ui-all.jpg" alt="FPlayer 高级皮肤截图：横屏视频，底部播放条与右侧操作按钮" width="960" height="432" style="width: 100%; max-width: 667px; height: auto; object-fit: contain" />
 
 ### API
 
