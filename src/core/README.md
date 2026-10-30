@@ -2,48 +2,34 @@
 title: 替换内核
 ---
 
-fplayer只是桥接了ijkplayer和flutter,ijkplayer才是真正的播放器内核。在使用的过程中可能会出现需要自己编译内核达到定制裁剪的能力从而达到增加功能或者压缩文件大小等。在使用过程中请注意：
+fplayer 只是桥接了 ijkplayer 和 Flutter，ijkplayer 才是真正的播放器内核。需要定制裁剪、增加能力或压缩体积时，可以自行编译内核。内核源码和发布仓库统一为 [FlutterPlayer/ijkplayer](https://github.com/FlutterPlayer/ijkplayer)，内核产物名为 `fplayercore`。
 
-1. 一定要使用项目内核的代码的仓库地址[fplayer-core](https://github.com/FlutterPlayer/ijkplayer)
-1. 以本地相对路径引入fijkplayer
-1. 以本地相对路径引入ijkplayer
+官方 Release 提供 Android AAR、iOS/macOS xcframework、Windows DLL 和 OpenHarmony HAR。fplayer 的 iOS/macOS `Package.swift` 通过 `binaryTarget(url:checksum:)` 直接引用这些官方 Release 资产，不需要额外的 SPM 包装仓库。
 
-## IOS
+在使用过程中请注意：
 
-编译参考 [此处](/core/build-iOS)
+1. 使用官方内核仓库 [FlutterPlayer/ijkplayer](https://github.com/FlutterPlayer/ijkplayer)
+2. 以本地相对路径引入 fplayer
+3. 以本地相对路径引入 ijkplayer
 
-把文件 IJKMediaPlayer.framework 复制到 ${fplayer}/ios/Frameworks 目录中。 修改文件 ${fplayer}/ios/fplayer.podsped 文件内容。
+## iOS / macOS
 
-```git
-+   # 去掉这三行原先的注释
-+   s.preserve_paths = 'Frameworks/*.framework'
-+   s.vendored_frameworks = 'Frameworks/IJKPlayer.framework'
-+   s.xcconfig = { 'LD_RUNPATH_SEARCH_PATHS' => '"$(PODS_ROOT)/Frameworks/"' }
+编译参考 [iOS 内核编译](/core/build-ios)。
 
--   # s.dependency 'fplayer-core', '~> 0.1.1' // 把原先这一行注释掉
-```
+使用 Swift Package Manager 时，不需要手动复制 framework；fplayer 的 `ios/fplayer/Package.swift` 和 `macos/fplayer/Package.swift` 会从官方 Release 下载对应 xcframework。
+
+如果使用 CocoaPods，可以把编译出的 `fplayercore.framework` 放到 `${fplayer}/ios/fplayer/Frameworks` 或 `${fplayer}/macos/fplayer/Frameworks`，再按 podspec 的 `vendored_frameworks` 配置引用。
 
 ## Android
 
-编译参考 [此处](/core/build-android)
+编译参考 [Android 内核编译](/core/build-android)。
 
-### fplayer 1.1.3 之前的版本 不含1.1.3
+推荐直接使用 Maven Central 上的 `io.github.flutterplayer:fplayercore:<version>`，不需要手动复制 AAR。fplayer 的 fetch 脚本会把 AAR 同步到 `android/local-repo/io/github/flutterplayer/fplayercore/<version>/`，Gradle 从该 mirror 或 Maven Central 解析同一个 artifact。
 
-把文件 fplayer-core.aar 复制到 ${fplayer}/android/aars 目录中。 修改文件 ${fplayer}/android/build.gradle 中 dependencies 内容。
-```git
--    implementation 'io.github.flutterplayer:fplayer-core:1.0.0' // 注释掉这一行
-+    implementation(name: 'fplayer-core', ext: 'aar')  // 去掉这行原先的注释
-```
+如果要替换为自定义 AAR，把 `fplayercore-release.aar` 放到上述版本目录，并保持 `android/fplayercore.version` 与目录版本一致。不要继续使用旧的 `fplayer-core.aar` 路径。
 
-### fplayer 1.1.3 之后的版本包含 1.1.3
-把文件 fplayer-core.aar 复制到 ${插件源码}/android/aars 目录中。 修改文件 ${插件源码}/android/build.gradle 中 dependencies 内容。
-```git
--    implementation 'io.github.flutterplayer:fplayer-core:1.0.0' // 注释掉这一行
-+    implementation fileTree(dir: 'aars', include: ['*.aar']) // 去掉这行原先的注释或者添加这行
-```
+## OpenHarmony
 
-## HarmonyOS
+鸿蒙系统需要先准备好 Flutter 环境，可以参考 [鸿蒙环境初始化](/core/harmonyos-init)。
 
-鸿蒙系统需要先将Flutter的环境准备好可以[参考](/core/harmonyos-init)
-
-准备好了之后就可以开始编译相关的内核代码
+内核构建会生成 `build/ohos/fplayercore-ohos.har`，fplayer 通过 `ohos/oh-package.json5` 依赖该 HAR。

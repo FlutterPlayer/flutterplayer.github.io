@@ -149,6 +149,48 @@ fplayer.setSpeed(1.5);
 ```
 倍速调整不宜过大，请根据实际效果设定合适的倍速值。
 
+## 音轨
+
+播放器准备完成后可以通过 `getAudioTracks` 获取当前媒体的音轨列表，再通过 `setAudioTrack` 切换音轨。Android、iOS、macOS、Windows 和 OpenHarmony 均支持。
+
+### FAudioTrack
+
+| 字段 | 类型 | 说明 |
+| --- | --- | --- |
+| `index` | `int` | 音轨的流索引，切换时使用 |
+| `language` | `String?` | 音轨语言 |
+| `codec` | `String?` | 编码短名称，例如 `aac` |
+| `codecLongName` | `String?` | 编码完整名称 |
+| `sampleRate` | `int?` | 采样率，单位 Hz |
+| `channelLayout` | `int?` | FFmpeg 声道布局掩码 |
+| `selected` | `bool` | 是否为当前选中的音轨 |
+
+### getAudioTracks
+```dart
+Future<List<FAudioTrack>> getAudioTracks() async
+```
+```dart
+final tracks = await fplayer.getAudioTracks();
+for (final track in tracks) {
+  print('${track.index} ${track.language} ${track.codec} ${track.selected}');
+}
+```
+
+返回当前媒体的音轨列表。播放器尚未准备完成或媒体没有音轨时返回空列表。
+
+### setAudioTrack
+```dart
+Future<void> setAudioTrack(FAudioTrack track) async
+```
+```dart
+final tracks = await fplayer.getAudioTracks();
+if (tracks.isNotEmpty) {
+  await fplayer.setAudioTrack(tracks.first);
+}
+```
+
+`track.index` 必须是 `getAudioTracks` 返回的音轨索引。切换后可以再次调用 `getAudioTracks` 确认 `selected` 状态。
+
 ### enterFullScreen
 ```dart 
 void enterFullScreen()

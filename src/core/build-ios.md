@@ -1,42 +1,42 @@
 ---
-title: IOS内核编译
+title: iOS 内核编译
 ---
 
-目前所有的环境均在Mac上编译如果是其他平台暂时不提供问题自行研究
+目前内核在 macOS + Xcode 上构建。iOS 产物是 `fplayercore.xcframework`，同时包含 device arm64 和 Apple Silicon 模拟器 arm64 切片。
 
-## 前期准备工作
-1. 先装基础环境
-```bash
-brew install git
-brew install yasm
-```
-2. 安装xcode
+## 环境准备
 
-## 编译
-1. 下载源码
 ```bash
-git clone https://github.com/FlutterPlayer/ijkplayer.git ijkplayer-ios
-cd ijkplayer-ios
+brew install git yasm nasm cmake
+xcode-select --install
 ```
 
-2. 初始化工程以及下载依赖源码
+## 初始化依赖
+
+在 ijkplayer 仓库根目录执行：
+
 ```bash
-bash init-ios-openssl.sh
-bash init-ios.sh
+bash scripts/init/init-ios.sh
+bash scripts/init/init-ios-openssl.sh
 ```
 
-3. 编译FFMpeg
+## 编译 OpenSSL 和 FFmpeg
+
 ```bash
-cd ios
-bash compile-openssl.sh all
-bash compile-ffmpeg.sh all
+bash scripts/build/ios/compile-openssl.sh all
+bash scripts/build/ios/compile-ffmpeg.sh all
 ```
 
-4. 编译ijkplayer
+## 编译 fplayercore
+
 ```bash
-cd IJKMediaPlayer
-xcodebuild -project IJKMediaPlayer.xcodeproj -configuration Release -scheme Universal
+xcodebuild -project platform/ios/IJKMediaPlayer/IJKMediaPlayer.xcodeproj \
+  -scheme fplayercore -configuration Release -sdk iphoneos -arch arm64 \
+  -derivedDataPath build/xcode-ios-iphoneos CODE_SIGNING_ALLOWED=NO build
+
+xcodebuild -project platform/ios/IJKMediaPlayer/IJKMediaPlayer.xcodeproj \
+  -scheme fplayercore -configuration Release -sdk iphonesimulator -arch arm64 \
+  -derivedDataPath build/xcode-ios-simulator CODE_SIGNING_ALLOWED=NO build
 ```
 
-## 产物
-在目录下会产生ijkplayer.framework引入即可使用
+用 `xcodebuild -create-xcframework` 合并两个 framework，产物为 `fplayercore.xcframework`。fplayer 通过官方 Release 中的 `fplayercore-ios.xcframework.zip` 使用它。

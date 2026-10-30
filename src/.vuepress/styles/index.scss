@@ -1,1 +1,66 @@
 // place your custom styles here
+
+/* Home page: let the custom landing sections own the full viewport. */
+main.home {
+  max-width: none;
+  padding: 0;
+  background: #07110f;
+}
+
+main.home > .hero-info-wrapper {
+  display: none;
+}
+
+main.home .theme-hope-content {
+  max-width: none;
+  margin: 0;
+  padding: 0;
+}
+
+body:has(.fp-home) {
+  background: #07110f;
+}
+
+body:has(.fp-home) .navbar {
+  border-bottom-color: rgba(222, 246, 233, 0.12);
+  background: rgba(7, 17, 15, 0.78);
+  backdrop-filter: blur(18px);
+}
+
+body:has(.fp-home) .navbar .brand,
+body:has(.fp-home) .navbar .nav-links a,
+body:has(.fp-home) .navbar .site-name,
+body:has(.fp-home) .navbar .toggle-sidebar-button {
+  color: #eff8f2;
+}
+
+body:has(.fp-home) .navbar .nav-links a.active,
+body:has(.fp-home) .navbar .nav-links a:hover {
+  border-color: #b6f36b;
+  color: #b6f36b;
+}
+
+body:has(.fp-home) .navbar .logo {
+  filter: grayscale(1) brightness(0) invert(1);
+  opacity: 0.9;
+}
+
+body:has(.fp-home) .footer-wrapper {
+  border-top: 1px solid rgba(222, 246, 233, 0.12);
+  color: #99b0a5;
+  background: #07110f;
+}
+
+body:has(.fp-home) .back-to-top {
+  display: none;
+}
+
+body:has(.fp-home) .footer-wrapper a {
+  color: #b6f36b;
+}
+
+@media (max-width: 720px) {
+  body:has(.fp-home) .navbar .site-name {
+    display: none;
+  }
+}

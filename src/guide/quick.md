@@ -12,11 +12,15 @@ title: 快速上手
 
 ### iOS debug
 
-新建的 Flutter 项目运行 iOS 时需要先在 ios 目录运行 `pod install --verbose` 安装依赖。
+iOS/macOS 默认使用 Swift Package Manager，先在项目根目录启用 SPM：
 
-同时，由于一些尚未解决的问题 [flutter/issues/14647](https://github.com/flutter/flutter/issues/14647)，暂时不能在 iOS 模拟器进行纹理的渲染，所需要 iOS 真机调试。那么就需要配置 Xcode 开发证书了。
+```bash
+flutter config --enable-swift-package-manager
+```
 
-打开 ios/Runner.xcworkspace Xcode 工程，Runner -> targtes -> Runner -> General -> Signing 进行开发证书配置。
+Swift Package Manager 会从 ijkplayer 的官方 GitHub Release 自动下载 `fplayercore` xcframework，不需要在 `ios` 目录执行 `pod install`。如果项目仍使用 CocoaPods，则按原有 `pod install` 流程安装。
+
+打开 ios/Runner.xcworkspace Xcode 工程，Runner -> targets -> Runner -> General -> Signing 进行开发证书配置。
 
 安装完依赖并且配置好证书之后，连接上 iOS 设备，在 Xcode 中直接运行项目，或者终端 `flutter run`，验证 Flutter App 可以顺利运行起来。
 

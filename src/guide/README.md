@@ -2,8 +2,7 @@
 title: 安装
 ---
 
-fplayer 是 fijkplayer 的 Flutter 封装， 是一款支持 android 和 iOS 的 Flutter 媒体播放器插件，
-由 [ijkplayer](https://github.com/befovy/ijkplayer) 底层驱动。  
+fplayer 是 fijkplayer 的 Flutter 封装，是一款支持 Android、iOS、macOS、Windows 和 OpenHarmony 的 Flutter 媒体播放器插件，由 [FlutterPlayer/ijkplayer](https://github.com/FlutterPlayer/ijkplayer) 内核驱动。
 通过纹理（Texture）接入播放器视频渲染到 Flutter 中。
 
 让我们开始使用 fplayer 构建你的 Flutter 音视频应用之旅！  
@@ -114,18 +113,27 @@ $ flutter pub get --verbose
 import 'package:fplayer/fplayer.dart';
 ```
 
-然后分别编译 ios 和 android 项目，确保 build 成功
+iOS/macOS 默认使用 Swift Package Manager。首次构建前启用 SPM：
 
+```bash
+flutter config --enable-swift-package-manager
 ```
-$ flutter build apk
-$ flutter build ios --no-codesign
+
+然后分别编译各平台项目，确保 build 成功：
+
+```bash
+flutter build apk
+flutter build ios --simulator --no-codesign
+flutter build macos
+flutter build windows
 ```
 
 #### **注意事项**
 * fplayer 中使用了 androidx 的 support 库，在 app 中需要启用 androidx
 * 如果 build apk 时太久时间没有输出，可以先在 android 目录运行 `./gradlew` 检查 gradle 环境是否正确。
-* pod install 安装依赖需要从 github 下载底层 ijkplayer 的二进制文件，如果网不好可能会很慢。  
-  建议在 ios 文件夹中运行 `pod install --verbose` 查看实时下载进度。
-* ios可调试环境：flutter 3.3.10、xcode 14.2
+* iOS/macOS 构建会通过 Swift Package Manager 从 ijkplayer 的官方 GitHub Release 下载 xcframework，网络较慢时请耐心等待。
+* iOS 模拟器使用 arm64 切片，请使用 Apple Silicon Mac 的模拟器。
+* 仍然使用 CocoaPods 的项目可以通过 podspec 使用 fetch 到 `Frameworks/` 的 framework；新项目推荐直接使用 Swift Package Manager。
+* ios 可调试环境：Flutter 3.41.9、Xcode 16+
 
 Flutter 中安装 fplayer 的内容到这里就结束了，有任何问题请在 [github issues](https://github.com/FlutterPlayer/fplayer/issues) 中进行提问。
